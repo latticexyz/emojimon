@@ -1,5 +1,6 @@
 import { SetupContractConfig } from "@latticexyz/std-client";
-import { Wallet } from "ethers";
+import { getBurnerWallet } from "./getBurnerWallet";
+
 const params = new URLSearchParams(window.location.search);
 
 export const config: SetupContractConfig = {
@@ -13,7 +14,7 @@ export const config: SetupContractConfig = {
     wsRpcUrl: params.get("wsRpc") ?? "ws://localhost:8545",
     chainId: Number(params.get("chainId")) || 31337,
   },
-  privateKey: Wallet.createRandom().privateKey,
+  privateKey: getBurnerWallet().privateKey,
   chainId: Number(params.get("chainId")) || 31337,
   snapshotServiceUrl: params.get("snapshot") ?? undefined,
   initialBlockNumber: Number(params.get("initialBlockNumber")) || 0,
