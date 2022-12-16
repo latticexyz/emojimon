@@ -1,6 +1,10 @@
 {
-  "components": ["PositionComponent"],
+  "components": ["MovableComponent", "PlayerComponent", "PositionComponent"],
   "systems": [
+    {
+      "name": "JoinGameSystem",
+      "writeAccess": ["MovableComponent", "PlayerComponent", "PositionComponent"]
+    },
     {
       "name": "MoveSystem",
       "writeAccess": ["PositionComponent"]
