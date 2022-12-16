@@ -4,7 +4,7 @@ import { config } from "./config";
 import { components, clientComponents } from "./components";
 import { world } from "./world";
 import { SystemAbis } from "contracts/types/SystemAbis.mjs";
-import { EntityID } from "@latticexyz/recs";
+import { EntityID, overridableComponent } from "@latticexyz/recs";
 import { GodID as singletonEntityId } from "@latticexyz/network";
 
 export type SetupResult = Awaited<ReturnType<typeof setup>>;
@@ -29,6 +29,11 @@ export const setup = async () => {
   const playerEntityId = address as EntityID;
   const playerEntity = world.registerEntity({ id: playerEntityId });
 
+  // Add support for optimistic rendering
+  const componentsWithOverrides = {
+    Position: overridableComponent(components.Position),
+  };
+
   return {
     ...result,
     world,
@@ -38,6 +43,7 @@ export const setup = async () => {
     playerEntity,
     components: {
       ...result.components,
+      ...componentsWithOverrides,
       ...clientComponents,
     },
   };

@@ -1,22 +1,34 @@
 import { useComponentValueStream } from "@latticexyz/std-client";
+import { uuid } from "@latticexyz/utils";
 import { useEffect } from "react";
 import { useMUD } from "./MUDContext";
 
 export const GameBoard = () => {
-  const { components, systems, playerEntity } = useMUD();
+  const {
+    components: { Position },
+    systems,
+    playerEntity,
+  } = useMUD();
 
   const rows = new Array(10).fill(0).map((_, i) => i);
   const columns = new Array(10).fill(0).map((_, i) => i);
 
-  const playerPosition = useComponentValueStream(
-    components.Position,
-    playerEntity
-  );
+  const playerPosition = useComponentValueStream(Position, playerEntity);
 
   useEffect(() => {
     const moveTo = async (x: number, y: number) => {
-      const tx = await systems["system.Move"].executeTyped({ x, y });
-      await tx.wait();
+      const positionId = uuid();
+      Position.addOverride(positionId, {
+        entity: playerEntity,
+        value: { x, y },
+      });
+
+      try {
+        const tx = await systems["system.Move"].executeTyped({ x, y });
+        await tx.wait();
+      } finally {
+        Position.removeOverride(positionId);
+      }
     };
 
     const moveBy = async (deltaX: number, deltaY: number) => {
@@ -45,7 +57,7 @@ export const GameBoard = () => {
     };
     window.addEventListener("keydown", listener);
     return () => window.removeEventListener("keydown", listener);
-  }, [playerPosition, systems]);
+  }, [Position, playerEntity, playerPosition, systems]);
 
   return (
     <div className="inline-grid p-2 bg-lime-500">
