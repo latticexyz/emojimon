@@ -32,6 +32,7 @@ export const setup = async () => {
   // Add support for optimistic rendering
   const componentsWithOverrides = {
     Position: overridableComponent(components.Position),
+    Player: overridableComponent(components.Player),
   };
 
   return {
