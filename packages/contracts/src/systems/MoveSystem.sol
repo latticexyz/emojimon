@@ -5,6 +5,7 @@ import { getAddressById, addressToEntity } from "solecs/utils.sol";
 import { PositionComponent, ID as PositionComponentID, Coord } from "components/PositionComponent.sol";
 import { MovableComponent, ID as MovableComponentID } from "components/MovableComponent.sol";
 import { MapConfigComponent, ID as MapConfigComponentID, MapConfig } from "components/MapConfigComponent.sol";
+import { LibMap } from "../LibMap.sol";
 
 uint256 constant ID = uint256(keccak256("system.Move"));
 
@@ -21,12 +22,14 @@ contract MoveSystem is System {
     MovableComponent movable = MovableComponent(getAddressById(components, MovableComponentID));
     require(movable.has(entityId), "cannot move");
 
+    PositionComponent position = PositionComponent(getAddressById(components, PositionComponentID));
+    require(LibMap.distance(position.getValue(entityId), coord) == 1, "can only move to adjacent spaces");
+
     // Constrain position to map size, wrapping around if necessary
     MapConfig memory mapConfig = MapConfigComponent(getAddressById(components, MapConfigComponentID)).getValue();
     coord.x = (coord.x + int32(mapConfig.width)) % int32(mapConfig.width);
     coord.y = (coord.y + int32(mapConfig.height)) % int32(mapConfig.height);
 
-    PositionComponent position = PositionComponent(getAddressById(components, PositionComponentID));
     position.set(entityId, coord);
   }
 }
