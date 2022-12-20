@@ -1,9 +1,15 @@
 {
-  "components": ["MapConfigComponent", "MovableComponent", "PlayerComponent", "PositionComponent"],
+  "components": [
+    "MapConfigComponent",
+    "MovableComponent",
+    "ObstructionComponent",
+    "PlayerComponent",
+    "PositionComponent"
+  ],
   "systems": [
     {
       "name": "InitSystem",
-      "writeAccess": ["MapConfigComponent"],
+      "writeAccess": ["MapConfigComponent", "ObstructionComponent", "PositionComponent"],
       "initialize": "new bytes(0)"
     },
     {

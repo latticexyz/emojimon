@@ -3,6 +3,8 @@ pragma solidity >=0.8.0;
 import { System, IWorld } from "solecs/System.sol";
 import { getAddressById } from "solecs/utils.sol";
 import { MapConfigComponent, ID as MapConfigComponentID, MapConfig } from "components/MapConfigComponent.sol";
+import { PositionComponent, ID as PositionComponentID, Coord } from "components/PositionComponent.sol";
+import { ObstructionComponent, ID as ObstructionComponentID } from "components/ObstructionComponent.sol";
 import { TerrainType } from "../TerrainType.sol";
 
 uint256 constant ID = uint256(keccak256("system.Init"));
@@ -13,6 +15,9 @@ contract InitSystem is System {
   function execute(bytes memory data) public returns (bytes memory) {
     MapConfigComponent mapConfig = MapConfigComponent(getAddressById(components, MapConfigComponentID));
     if (mapConfig.isSet()) return new bytes(0);
+
+    PositionComponent position = PositionComponent(getAddressById(components, PositionComponentID));
+    ObstructionComponent obstruction = ObstructionComponent(getAddressById(components, ObstructionComponentID));
 
     // Alias these to make em easier to draw a tile map
     TerrainType O = TerrainType.None;
@@ -52,6 +57,12 @@ contract InitSystem is System {
         if (terrainType == TerrainType.None) continue;
 
         terrain[(y * width) + x] = bytes1(uint8(terrainType));
+
+        if (terrainType == TerrainType.Boulder) {
+          uint256 entity = world.getUniqueEntityId();
+          position.set(entity, Coord(int32(x), int32(y)));
+          obstruction.set(entity);
+        }
       }
     }
 
