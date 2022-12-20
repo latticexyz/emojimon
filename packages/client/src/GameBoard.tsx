@@ -1,5 +1,6 @@
 import { useComponentValueStream } from "@latticexyz/std-client";
 import { useMUD } from "./MUDContext";
+import { useMapConfig } from "./useMapConfig";
 import { useJoinGame } from "./useJoinGame";
 import { useMovement } from "./useMovement";
 
@@ -9,8 +10,9 @@ export const GameBoard = () => {
     playerEntity,
   } = useMUD();
 
-  const rows = new Array(10).fill(0).map((_, i) => i);
-  const columns = new Array(10).fill(0).map((_, i) => i);
+  const mapConfig = useMapConfig();
+  const rows = new Array(mapConfig.height).fill(0).map((_, i) => i);
+  const columns = new Array(mapConfig.width).fill(0).map((_, i) => i);
 
   const { canJoinGame, joinGame } = useJoinGame();
   const playerPosition = useComponentValueStream(Position, playerEntity);
