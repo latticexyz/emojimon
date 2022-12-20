@@ -11,6 +11,7 @@ export const components = {
     {
       width: Type.Number,
       height: Type.Number,
+      terrain: Type.String,
     },
     {
       id: "MapConfig",
