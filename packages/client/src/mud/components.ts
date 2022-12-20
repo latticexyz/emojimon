@@ -23,6 +23,11 @@ export const components = {
       contractId: "component.Movable",
     },
   }),
+  Obstruction: defineBoolComponent(world, {
+    metadata: {
+      contractId: "component.Obstruction",
+    },
+  }),
   Player: defineBoolComponent(world, {
     metadata: {
       contractId: "component.Player",

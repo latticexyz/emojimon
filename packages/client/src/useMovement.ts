@@ -1,3 +1,4 @@
+import { Has, HasValue, runQuery } from "@latticexyz/recs";
 import { useComponentValueStream } from "@latticexyz/std-client";
 import { uuid } from "@latticexyz/utils";
 import { useCallback, useEffect } from "react";
@@ -6,7 +7,7 @@ import { useMapConfig } from "./useMapConfig";
 
 export const useMovement = () => {
   const {
-    components: { Position },
+    components: { Obstruction, Position },
     systems,
     playerEntity,
   } = useMUD();
@@ -16,12 +17,23 @@ export const useMovement = () => {
 
   const moveTo = useCallback(
     async (x: number, y: number) => {
+      const wrappedX = (x + width) % width;
+      const wrappedY = (y + height) % height;
+
+      const obstructed = runQuery([
+        Has(Obstruction),
+        HasValue(Position, { x: wrappedX, y: wrappedY }),
+      ]);
+      if (obstructed.size > 0) {
+        throw new Error("cannot move to obstructed space");
+      }
+
       const positionId = uuid();
       Position.addOverride(positionId, {
         entity: playerEntity,
         value: {
-          x: (x + width) % width,
-          y: (y + height) % height,
+          x: wrappedX,
+          y: wrappedY,
         },
       });
 
@@ -32,7 +44,7 @@ export const useMovement = () => {
         Position.removeOverride(positionId);
       }
     },
-    [Position, height, playerEntity, systems, width]
+    [Obstruction, Position, height, playerEntity, systems, width]
   );
 
   const moveBy = useCallback(
