@@ -6,6 +6,7 @@ import { getAddressById } from "solecs/utils.sol";
 import { PlayerComponent, ID as PlayerComponentID } from "components/PlayerComponent.sol";
 import { PositionComponent, ID as PositionComponentID, Coord } from "components/PositionComponent.sol";
 import { MovableComponent, ID as MovableComponentID } from "components/MovableComponent.sol";
+import { EncounterableComponent, ID as EncounterableComponentID } from "components/EncounterableComponent.sol";
 import { MapConfigComponent, ID as MapConfigComponentID, MapConfig } from "components/MapConfigComponent.sol";
 import { LibMap } from "../LibMap.sol";
 
@@ -35,5 +36,6 @@ contract JoinGameSystem is System {
     player.set(entityId);
     PositionComponent(getAddressById(components, PositionComponentID)).set(entityId, coord);
     MovableComponent(getAddressById(components, MovableComponentID)).set(entityId);
+    EncounterableComponent(getAddressById(components, EncounterableComponentID)).set(entityId);
   }
 }

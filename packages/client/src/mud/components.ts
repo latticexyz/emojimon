@@ -6,6 +6,11 @@ import {
 import { world } from "./world";
 
 export const components = {
+  Encounterable: defineBoolComponent(world, {
+    metadata: {
+      contractId: "component.Encounterable",
+    },
+  }),
   EncounterTrigger: defineBoolComponent(world, {
     metadata: {
       contractId: "component.EncounterTrigger",
