@@ -1,5 +1,6 @@
 {
   "components": [
+    "EncounterTriggerComponent",
     "MapConfigComponent",
     "MovableComponent",
     "ObstructionComponent",
@@ -9,7 +10,7 @@
   "systems": [
     {
       "name": "InitSystem",
-      "writeAccess": ["MapConfigComponent", "ObstructionComponent", "PositionComponent"],
+      "writeAccess": ["EncounterTriggerComponent", "MapConfigComponent", "ObstructionComponent", "PositionComponent"],
       "initialize": "new bytes(0)"
     },
     {
