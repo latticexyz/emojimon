@@ -7,13 +7,15 @@ import { useMapConfig } from "./useMapConfig";
 
 export const useMovement = () => {
   const {
-    components: { Obstruction, Position },
+    components: { Encounter, Obstruction, Position },
     systems,
     playerEntity,
   } = useMUD();
 
   const { width, height } = useMapConfig();
   const playerPosition = useComponentValueStream(Position, playerEntity);
+  const inEncounter =
+    useComponentValueStream(Encounter, playerEntity)?.value != null;
 
   const moveTo = useCallback(
     async (x: number, y: number) => {
@@ -26,6 +28,10 @@ export const useMovement = () => {
       ]);
       if (obstructed.size > 0) {
         throw new Error("cannot move to obstructed space");
+      }
+
+      if (inEncounter) {
+        throw new Error("cannot move while in encounter");
       }
 
       const positionId = uuid();
@@ -44,7 +50,7 @@ export const useMovement = () => {
         Position.removeOverride(positionId);
       }
     },
-    [Obstruction, Position, height, playerEntity, systems, width]
+    [Obstruction, Position, height, inEncounter, playerEntity, systems, width]
   );
 
   const moveBy = useCallback(
