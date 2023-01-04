@@ -2,10 +2,16 @@ import { defineComponent, Type } from "@latticexyz/recs";
 import {
   defineBoolComponent,
   defineCoordComponent,
+  defineStringComponent,
 } from "@latticexyz/std-client";
 import { world } from "./world";
 
 export const components = {
+  Encounter: defineStringComponent(world, {
+    metadata: {
+      contractId: "component.Encounter",
+    },
+  }),
   Encounterable: defineBoolComponent(world, {
     metadata: {
       contractId: "component.Encounterable",
