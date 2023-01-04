@@ -3,10 +3,13 @@ import { useMUD } from "./MUDContext";
 import { useMapConfig } from "./useMapConfig";
 import { useJoinGame } from "./useJoinGame";
 import { useMovement } from "./useMovement";
+import { useEffect, useState } from "react";
+import { EncounterScreen } from "./EncounterScreen";
+import { EntityID } from "@latticexyz/recs";
 
 export const GameBoard = () => {
   const {
-    components: { Position },
+    components: { Encounter, Position },
     playerEntity,
   } = useMUD();
 
@@ -18,13 +21,26 @@ export const GameBoard = () => {
   const playerPosition = useComponentValueStream(Position, playerEntity);
   useMovement();
 
+  const encounterId = useComponentValueStream(Encounter, playerEntity)
+    ?.value as EntityID | undefined;
+  const [showEncounter, setShowEncounter] = useState(false);
+
+  // Reset show encounter when we leave encounter
+  useEffect(() => {
+    if (!encounterId) {
+      setShowEncounter(false);
+    }
+  }, [encounterId]);
+
   return (
-    <div className="inline-grid p-2 bg-lime-500">
+    <div className="inline-grid p-2 bg-lime-500 relative overflow-hidden">
       {rows.map((y) =>
         columns.map((x) => {
           const terrain = mapConfig.terrainValues.find(
             (t) => t.x === x && t.y === y
           )?.type;
+
+          const hasPlayer = playerPosition?.x === x && playerPosition?.y === y;
 
           return (
             <div
@@ -43,22 +59,42 @@ export const GameBoard = () => {
                 }
               }}
             >
+              {hasPlayer && encounterId ? (
+                <div
+                  className="absolute z-10 animate-battle"
+                  style={{
+                    boxShadow: "0 0 0 100vmax black",
+                  }}
+                  onAnimationEnd={() => {
+                    setShowEncounter(true);
+                  }}
+                ></div>
+              ) : null}
               <div className="flex flex-wrap gap-1 items-center justify-center relative">
                 {terrain ? (
                   <div className="absolute inset-0 flex items-center justify-center text-3xl pointer-events-none">
                     {terrain.emoji}
                   </div>
                 ) : null}
-                <div className="relative">
-                  {playerPosition?.x === x && playerPosition?.y === y ? (
-                    <>🤠</>
-                  ) : null}
-                </div>
+                <div className="relative">{hasPlayer ? <>🤠</> : null}</div>
               </div>
             </div>
           );
         })
       )}
+      {encounterId && showEncounter ? (
+        <div
+          className="-m-2 z-20 bg-black text-white flex items-center justify-center"
+          style={{
+            gridColumnStart: 1,
+            gridColumnEnd: mapConfig.width + 1,
+            gridRowStart: 1,
+            gridRowEnd: mapConfig.height + 1,
+          }}
+        >
+          <EncounterScreen encounterId={encounterId} />
+        </div>
+      ) : null}
     </div>
   );
 };
