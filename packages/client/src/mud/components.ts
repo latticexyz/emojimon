@@ -8,6 +8,11 @@ import {
 import { world } from "./world";
 
 export const components = {
+  Counter: defineNumberComponent(world, {
+    metadata: {
+      contractId: "component.Counter",
+    },
+  }),
   Encounter: defineStringComponent(world, {
     metadata: {
       contractId: "component.Encounter",
@@ -48,6 +53,11 @@ export const components = {
   Obstruction: defineBoolComponent(world, {
     metadata: {
       contractId: "component.Obstruction",
+    },
+  }),
+  OwnedBy: defineStringComponent(world, {
+    metadata: {
+      contractId: "component.OwnedBy",
     },
   }),
   Player: defineBoolComponent(world, {

@@ -18,7 +18,10 @@ export const setup = async () => {
     config,
     world,
     components,
-    SystemAbis
+    SystemAbis,
+    {
+      fetchSystemCalls: true,
+    }
   );
 
   result.startSync();

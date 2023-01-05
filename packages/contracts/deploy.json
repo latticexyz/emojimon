@@ -1,5 +1,6 @@
 {
   "components": [
+    "CounterComponent",
     "EncounterComponent",
     "EncounterableComponent",
     "EncounterTriggerComponent",
@@ -7,10 +8,15 @@
     "MonsterTypeComponent",
     "MovableComponent",
     "ObstructionComponent",
+    "OwnedByComponent",
     "PlayerComponent",
     "PositionComponent"
   ],
   "systems": [
+    {
+      "name": "EncounterThrowSystem",
+      "writeAccess": ["CounterComponent", "EncounterComponent", "OwnedByComponent"]
+    },
     {
       "name": "InitSystem",
       "writeAccess": ["EncounterTriggerComponent", "MapConfigComponent", "ObstructionComponent", "PositionComponent"],
