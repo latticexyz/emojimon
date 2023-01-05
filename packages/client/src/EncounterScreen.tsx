@@ -114,6 +114,25 @@ export const EncounterScreen = ({ encounterId }: Props) => {
         <button
           type="button"
           className="bg-stone-800 hover:ring rounded-lg px-4 py-2"
+          onClick={async () => {
+            const toastId = toast.loading("Running away…");
+            const tx = await systems["system.EncounterFlee"].executeTyped(
+              encounterId
+            );
+            systemCallStreams["system.EncounterFlee"].subscribe(
+              (systemCall) => {
+                if (systemCall.tx.hash !== tx.hash) return;
+
+                toast.update(toastId, {
+                  isLoading: false,
+                  type: "default",
+                  render: `You ran away!`,
+                  autoClose: 5000,
+                  closeButton: true,
+                });
+              }
+            );
+          }}
         >
           🏃‍♂️ Run
         </button>
