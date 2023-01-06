@@ -3,13 +3,14 @@ import { useMUD } from "./MUDContext";
 import { useMapConfig } from "./useMapConfig";
 import { useJoinGame } from "./useJoinGame";
 import { useMovement } from "./useMovement";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { EncounterScreen } from "./EncounterScreen";
-import { EntityID } from "@latticexyz/recs";
+import { EntityID, getComponentValueStrict, Has } from "@latticexyz/recs";
+import { useEntityQuery } from "./useEntityQuery";
 
 export const GameBoard = () => {
   const {
-    components: { Encounter, Position },
+    components: { Encounter, Player, Position },
     playerEntity,
   } = useMUD();
 
@@ -20,6 +21,18 @@ export const GameBoard = () => {
   const { canJoinGame, joinGame } = useJoinGame();
   const playerPosition = useComponentValueStream(Position, playerEntity);
   useMovement();
+
+  const otherPlayers = useEntityQuery(
+    useMemo(() => [Has(Player), Has(Position)], [Player, Position])
+  )
+    .filter((entity) => entity !== playerEntity)
+    .map((entity) => {
+      const position = getComponentValueStrict(Position, entity);
+      return {
+        entity,
+        position,
+      };
+    });
 
   const encounterId = useComponentValueStream(Encounter, playerEntity)
     ?.value as EntityID | undefined;
@@ -41,6 +54,9 @@ export const GameBoard = () => {
           )?.type;
 
           const hasPlayer = playerPosition?.x === x && playerPosition?.y === y;
+          const otherPlayersHere = otherPlayers.filter(
+            (p) => p.position.x === x && p.position.y === y
+          );
 
           return (
             <div
@@ -76,7 +92,12 @@ export const GameBoard = () => {
                     {terrain.emoji}
                   </div>
                 ) : null}
-                <div className="relative">{hasPlayer ? <>🤠</> : null}</div>
+                <div className="relative">
+                  {hasPlayer ? <>🤠</> : null}
+                  {otherPlayersHere.map((p) => (
+                    <span key={p.entity}>🥸</span>
+                  ))}
+                </div>
               </div>
             </div>
           );
