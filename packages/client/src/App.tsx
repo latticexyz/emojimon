@@ -1,6 +1,7 @@
 import { SyncState } from "@latticexyz/network";
 import { useComponentValueStream } from "@latticexyz/std-client";
 import { GameBoard } from "./GameBoard";
+import { Inventory } from "./Inventory";
 import { useMUD } from "./MUDContext";
 
 export const App = () => {
@@ -25,7 +26,12 @@ export const App = () => {
           {loadingState.msg} ({Math.floor(loadingState.percentage)}%)
         </div>
       ) : (
-        <GameBoard />
+        <div>
+          <div className="absolute top-0 right-0">
+            <Inventory />
+          </div>
+          <GameBoard />
+        </div>
       )}
     </div>
   );
