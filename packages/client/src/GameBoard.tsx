@@ -10,7 +10,7 @@ import { useEntityQuery } from "./useEntityQuery";
 
 export const GameBoard = () => {
   const {
-    components: { Encounter, Player, Position },
+    components: { Encounter, Name, Player, Position },
     playerEntity,
   } = useMUD();
 
@@ -20,6 +20,7 @@ export const GameBoard = () => {
 
   const { canJoinGame, joinGame } = useJoinGame();
   const playerPosition = useComponentValueStream(Position, playerEntity);
+  const playerName = useComponentValueStream(Name, playerEntity);
   useMovement();
 
   const otherPlayers = useEntityQuery(
@@ -28,9 +29,11 @@ export const GameBoard = () => {
     .filter((entity) => entity !== playerEntity)
     .map((entity) => {
       const position = getComponentValueStrict(Position, entity);
+      const name = getComponentValueStrict(Name, entity);
       return {
         entity,
         position,
+        name
       };
     });
 
@@ -61,9 +64,8 @@ export const GameBoard = () => {
           return (
             <div
               key={`${x},${y}`}
-              className={`w-8 h-8 flex items-center justify-center ${
-                canJoinGame ? "cursor-pointer hover:ring" : ""
-              }`}
+              className={`w-8 h-8 flex items-center justify-center ${canJoinGame ? "cursor-pointer hover:ring" : ""
+                }`}
               style={{
                 gridColumn: x + 1,
                 gridRow: y + 1,
@@ -92,10 +94,10 @@ export const GameBoard = () => {
                     {terrain.emoji}
                   </div>
                 ) : null}
-                <div className="relative">
-                  {hasPlayer ? <>🤠</> : null}
+                <div className="relative text-center">
+                  {hasPlayer ? <>🤠 {playerName?.value}</> : null}
                   {otherPlayersHere.map((p) => (
-                    <span key={p.entity}>🥸</span>
+                    <span key={p.entity}>🥸 {p.name.value}</span>
                   ))}
                 </div>
               </div>

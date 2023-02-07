@@ -50,6 +50,11 @@ export const components = {
       contractId: "component.Movable",
     },
   }),
+  Name: defineStringComponent(world, {
+    metadata: {
+      contractId: "component.Name",
+    },
+  }),
   Obstruction: defineBoolComponent(world, {
     metadata: {
       contractId: "component.Obstruction",
