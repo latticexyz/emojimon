@@ -1,6 +1,7 @@
 import { SyncState } from "@latticexyz/network";
 import { useComponentValueStream } from "@latticexyz/std-client";
 import { GameBoard } from "./GameBoard";
+import { Inventory } from "./Inventory";
 import { useMUD } from "./MUDContext";
 import { NamingForm } from "./NamingForm";
 
@@ -29,6 +30,7 @@ export const App = () => {
         <div>
           <div className="absolute top-0 right-0">
             <NamingForm />
+            <Inventory />
           </div>
           <GameBoard />
         </div>
