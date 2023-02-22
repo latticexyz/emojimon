@@ -1,24 +1,9 @@
-import { useComponentValue } from "@latticexyz/react";
-import { useMUD } from "./MUDContext";
+import { GameBoard } from "./GameBoard";
 
 export const App = () => {
-  const { components, systems, singletonEntity, singletonEntityId } = useMUD();
-  const counter = useComponentValue(components.Counter, singletonEntity);
   return (
-    <>
-      <div>
-        Counter: <span>{counter?.value ?? "??"}</span>
-      </div>
-      <button
-        type="button"
-        className="border"
-        onClick={(event) => {
-          event.preventDefault();
-          systems["system.Increment"].executeTyped(singletonEntityId);
-        }}
-      >
-        Increment
-      </button>
-    </>
+    <div className="w-screen h-screen flex items-center justify-center">
+      <GameBoard />
+    </div>
   );
 };
