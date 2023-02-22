@@ -1,17 +1,9 @@
-import { SingletonID, TxQueue } from "@latticexyz/network";
-import { World } from "@latticexyz/recs";
-import { SystemTypes } from "contracts/types/SystemTypes";
 import { useComponentValue } from "@latticexyz/react";
-import { components, singletonIndex } from ".";
+import { useMUD } from "./MUDContext";
 
-type Props = {
-  world: World;
-  systems: TxQueue<SystemTypes>;
-  components: typeof components;
-};
-
-export const App = ({ systems, components }: Props) => {
-  const counter = useComponentValue(components.Counter, singletonIndex);
+export const App = () => {
+  const { components, systems, singletonEntity, singletonEntityId } = useMUD();
+  const counter = useComponentValue(components.Counter, singletonEntity);
   return (
     <>
       <div>
@@ -19,9 +11,10 @@ export const App = ({ systems, components }: Props) => {
       </div>
       <button
         type="button"
+        className="border"
         onClick={(event) => {
           event.preventDefault();
-          systems["system.Increment"].executeTyped(SingletonID);
+          systems["system.Increment"].executeTyped(singletonEntityId);
         }}
       >
         Increment
