@@ -7,6 +7,7 @@ import { SystemAbis } from "contracts/types/SystemAbis.mjs";
 import { EntityID, getComponentValue } from "@latticexyz/recs";
 import { createFaucetService, SingletonID } from "@latticexyz/network";
 import { ethers } from "ethers";
+import { uuid } from "@latticexyz/utils";
 
 export type SetupResult = Awaited<ReturnType<typeof setup>>;
 
@@ -60,8 +61,18 @@ export const setup = async () => {
   }
 
   const moveTo = async (x: number, y: number) => {
-    const tx = await result.systems["system.Move"].executeTyped({ x, y });
-    await tx.wait();
+    const positionId = uuid();
+    components.Position.addOverride(positionId, {
+      entity: playerEntity,
+      value: { x, y },
+    });
+
+    try {
+      const tx = await result.systems["system.Move"].executeTyped({ x, y });
+      await tx.wait();
+    } finally {
+      components.Position.removeOverride(positionId);
+    }
   };
 
   const moveBy = async (deltaX: number, deltaY: number) => {
