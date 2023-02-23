@@ -84,6 +84,34 @@ export const setup = async () => {
     await moveTo(playerPosition.x + deltaX, playerPosition.y + deltaY);
   };
 
+  const joinGame = async (x: number, y: number) => {
+    const canJoinGame =
+      getComponentValue(components.Player, playerEntity)?.value !== true;
+
+    if (!canJoinGame) {
+      throw new Error("already joined game");
+    }
+
+    const positionId = uuid();
+    components.Position.addOverride(positionId, {
+      entity: playerEntity,
+      value: { x, y },
+    });
+    const playerId = uuid();
+    components.Player.addOverride(playerId, {
+      entity: playerEntity,
+      value: { value: true },
+    });
+
+    try {
+      const tx = await result.systems["system.JoinGame"].executeTyped({ x, y });
+      await tx.wait();
+    } finally {
+      components.Position.removeOverride(positionId);
+      components.Player.removeOverride(playerId);
+    }
+  };
+
   return {
     ...result,
     world,
@@ -95,6 +123,7 @@ export const setup = async () => {
     api: {
       moveTo,
       moveBy,
+      joinGame,
     },
   };
 };

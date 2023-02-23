@@ -1,38 +1,21 @@
-import { useEffect } from "react";
 import { useComponentValue } from "@latticexyz/react";
 import { useMUD } from "./MUDContext";
+import { useKeyboardMovement } from "./useKeyboardMovement";
 
 export const GameBoard = () => {
   const rows = new Array(20).fill(0).map((_, i) => i);
   const columns = new Array(20).fill(0).map((_, i) => i);
 
   const {
-    components: { Position },
-    api: { moveTo, moveBy },
+    components: { Position, Player },
+    api: { moveTo, joinGame },
     playerEntity,
   } = useMUD();
 
-  useEffect(() => {
-    const listener = (e: KeyboardEvent) => {
-      if (e.key === "ArrowUp") {
-        moveBy(0, -1);
-      }
-      if (e.key === "ArrowDown") {
-        moveBy(0, 1);
-      }
-      if (e.key === "ArrowLeft") {
-        moveBy(-1, 0);
-      }
-      if (e.key === "ArrowRight") {
-        moveBy(1, 0);
-      }
-    };
-
-    window.addEventListener("keydown", listener);
-    return () => window.removeEventListener("keydown", listener);
-  }, [moveBy]);
+  useKeyboardMovement();
 
   const playerPosition = useComponentValue(Position, playerEntity);
+  const canJoinGame = useComponentValue(Player, playerEntity)?.value !== true;
 
   return (
     <div className="inline-grid p-2 bg-lime-500">
@@ -47,7 +30,11 @@ export const GameBoard = () => {
             }}
             onClick={(event) => {
               event.preventDefault();
-              moveTo(x, y);
+              if (canJoinGame) {
+                joinGame(x, y);
+              } else {
+                moveTo(x, y);
+              }
             }}
           >
             {playerPosition?.x === x && playerPosition?.y === y ? (
