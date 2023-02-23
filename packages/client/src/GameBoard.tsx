@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useComponentValue } from "@latticexyz/react";
 import { useMUD } from "./MUDContext";
 
@@ -7,9 +8,29 @@ export const GameBoard = () => {
 
   const {
     components: { Position },
-    systems,
+    api: { moveTo, moveBy },
     playerEntity,
   } = useMUD();
+
+  useEffect(() => {
+    const listener = (e: KeyboardEvent) => {
+      if (e.key === "ArrowUp") {
+        moveBy(0, -1);
+      }
+      if (e.key === "ArrowDown") {
+        moveBy(0, 1);
+      }
+      if (e.key === "ArrowLeft") {
+        moveBy(-1, 0);
+      }
+      if (e.key === "ArrowRight") {
+        moveBy(1, 0);
+      }
+    };
+
+    window.addEventListener("keydown", listener);
+    return () => window.removeEventListener("keydown", listener);
+  }, [moveBy]);
 
   const playerPosition = useComponentValue(Position, playerEntity);
 
@@ -26,7 +47,7 @@ export const GameBoard = () => {
             }}
             onClick={(event) => {
               event.preventDefault();
-              systems["system.Move"].executeTyped({ x, y });
+              moveTo(x, y);
             }}
           >
             {playerPosition?.x === x && playerPosition?.y === y ? (

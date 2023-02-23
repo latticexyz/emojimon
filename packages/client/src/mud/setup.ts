@@ -4,7 +4,7 @@ import { config } from "./config";
 import { contractComponents, clientComponents } from "./components";
 import { world } from "./world";
 import { SystemAbis } from "contracts/types/SystemAbis.mjs";
-import { EntityID } from "@latticexyz/recs";
+import { EntityID, getComponentValue } from "@latticexyz/recs";
 import { createFaucetService, SingletonID } from "@latticexyz/network";
 import { ethers } from "ethers";
 
@@ -59,6 +59,20 @@ export const setup = async () => {
     setInterval(requestDrip, 20000);
   }
 
+  const moveTo = async (x: number, y: number) => {
+    const tx = await result.systems["system.Move"].executeTyped({ x, y });
+    await tx.wait();
+  };
+
+  const moveBy = async (deltaX: number, deltaY: number) => {
+    const playerPosition = getComponentValue(components.Position, playerEntity);
+    if (!playerPosition) {
+      console.warn("cannot moveBy without a player position, not yet spawned?");
+      return;
+    }
+    await moveTo(playerPosition.x + deltaX, playerPosition.y + deltaY);
+  };
+
   return {
     ...result,
     world,
@@ -67,5 +81,9 @@ export const setup = async () => {
     playerEntityId,
     playerEntity,
     components,
+    api: {
+      moveTo,
+      moveBy,
+    },
   };
 };
