@@ -1,5 +1,6 @@
 {
-  "components": ["MovableComponent", "PlayerComponent", "PositionComponent"],
+  "components": ["MapConfigComponent", "MovableComponent", "PlayerComponent", "PositionComponent"],
+  "initializers": ["MapConfigInitializer"],
   "systems": [
     {
       "name": "JoinGameSystem",

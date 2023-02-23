@@ -1,4 +1,4 @@
-import { overridableComponent } from "@latticexyz/recs";
+import { overridableComponent, defineComponent, Type } from "@latticexyz/recs";
 import {
   defineBoolComponent,
   defineCoordComponent,
@@ -6,6 +6,17 @@ import {
 import { world } from "./world";
 
 export const contractComponents = {
+  MapConfig: defineComponent(
+    world,
+    {
+      width: Type.Number,
+      height: Type.Number,
+    },
+    {
+      id: "MapConfig",
+      metadata: { contractId: "component.MapConfig" },
+    }
+  ),
   Movable: defineBoolComponent(world, {
     metadata: {
       contractId: "component.Movable",

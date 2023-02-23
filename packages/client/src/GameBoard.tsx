@@ -1,10 +1,12 @@
 import { useComponentValue } from "@latticexyz/react";
 import { useMUD } from "./MUDContext";
 import { useKeyboardMovement } from "./useKeyboardMovement";
+import { useMapConfig } from "./useMapConfig";
 
 export const GameBoard = () => {
-  const rows = new Array(20).fill(0).map((_, i) => i);
-  const columns = new Array(20).fill(0).map((_, i) => i);
+  const { width, height } = useMapConfig();
+  const rows = new Array(width).fill(0).map((_, i) => i);
+  const columns = new Array(height).fill(0).map((_, i) => i);
 
   const {
     components: { Position, Player },
