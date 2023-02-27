@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
+import { toast } from "react-toastify";
 import {
   EntityID,
   getComponentValueStrict,
@@ -18,6 +19,7 @@ export const EncounterScreen = ({ encounterId }: Props) => {
   const {
     world,
     components: { Encounter, MonsterType },
+    api: { throwBall },
   } = useMUD();
 
   const monster = useEntityQuery([
@@ -51,6 +53,44 @@ export const EncounterScreen = ({ encounterId }: Props) => {
     >
       <div className="text-8xl animate-bounce">{monster.monster.emoji}</div>
       <div>A wild {monster.monster.name} appears!</div>
+
+      <div className="flex gap-2">
+        <button
+          type="button"
+          className="bg-stone-600 hover:ring rounded-lg px-4 py-2"
+          onClick={async () => {
+            const toastId = toast.loading("Throwing emojiball…");
+            const { status } = await throwBall(encounterId, monster.entityId);
+            if (status === "caught") {
+              toast.update(toastId, {
+                isLoading: false,
+                type: "success",
+                render: `You caught the ${monster.monster.name}!`,
+                autoClose: 5000,
+                closeButton: true,
+              });
+            } else if (status === "fled") {
+              toast.update(toastId, {
+                isLoading: false,
+                type: "error",
+                render: `Oh no, the ${monster.monster.name} fled!`,
+                autoClose: 5000,
+                closeButton: true,
+              });
+            } else {
+              toast.update(toastId, {
+                isLoading: false,
+                type: "error",
+                render: "You missed!",
+                autoClose: 5000,
+                closeButton: true,
+              });
+            }
+          }}
+        >
+          ☄️ Throw
+        </button>
+      </div>
     </div>
   );
 };

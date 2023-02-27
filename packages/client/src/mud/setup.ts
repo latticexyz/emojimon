@@ -9,6 +9,7 @@ import { createFaucetService, SingletonID } from "@latticexyz/network";
 import { ethers } from "ethers";
 import { uuid } from "@latticexyz/utils";
 import { Has, HasValue, runQuery } from "@latticexyz/recs";
+import { filter, first } from "rxjs";
 
 export type SetupResult = Awaited<ReturnType<typeof setup>>;
 
@@ -17,7 +18,10 @@ export const setup = async () => {
     config,
     world,
     contractComponents,
-    SystemAbis
+    SystemAbis,
+    {
+      fetchSystemCalls: true,
+    }
   );
 
   result.startSync();
@@ -138,6 +142,42 @@ export const setup = async () => {
     }
   };
 
+  const throwBall = async (encounterId: EntityID, monsterId: EntityID) => {
+    const tx = await result.systems["system.EncounterThrow"].executeTyped(
+      encounterId,
+      monsterId
+    );
+
+    return new Promise<{ status: "caught" | "fled" | "missed"; tx: typeof tx }>(
+      (resolve) => {
+        result.systemCallStreams["system.EncounterThrow"]
+          .pipe(filter((systemCall) => systemCall.tx.hash === tx.hash))
+          .pipe(first())
+          .subscribe((systemCall) => {
+            const isCaught = systemCall.updates.some(
+              (update) =>
+                update.component.metadata?.contractId === "component.OwnedBy"
+            );
+            if (isCaught) {
+              resolve({ status: "caught", tx });
+              return;
+            }
+
+            const hasFled = systemCall.updates.some(
+              (update) =>
+                update.component.metadata?.contractId === "component.Encounter"
+            );
+            if (hasFled) {
+              resolve({ status: "fled", tx });
+              return;
+            }
+
+            resolve({ status: "missed", tx });
+          });
+      }
+    );
+  };
+
   return {
     ...result,
     world,
@@ -150,6 +190,7 @@ export const setup = async () => {
       moveTo,
       moveBy,
       joinGame,
+      throwBall,
     },
   };
 };

@@ -1,5 +1,6 @@
 {
   "components": [
+    "CounterComponent",
     "EncounterComponent",
     "EncounterableComponent",
     "EncounterTriggerComponent",
@@ -7,11 +8,16 @@
     "MonsterTypeComponent",
     "MovableComponent",
     "ObstructionComponent",
+    "OwnedByComponent",
     "PlayerComponent",
     "PositionComponent"
   ],
   "initializers": ["MapConfigInitializer"],
   "systems": [
+    {
+      "name": "EncounterThrowSystem",
+      "writeAccess": ["CounterComponent", "EncounterComponent", "OwnedByComponent"]
+    },
     {
       "name": "JoinGameSystem",
       "writeAccess": ["EncounterableComponent", "MovableComponent", "PlayerComponent", "PositionComponent"]
