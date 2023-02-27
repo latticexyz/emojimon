@@ -15,6 +15,10 @@
   "initializers": ["MapConfigInitializer"],
   "systems": [
     {
+      "name": "EncounterFleeSystem",
+      "writeAccess": ["EncounterComponent"]
+    },
+    {
       "name": "EncounterThrowSystem",
       "writeAccess": ["CounterComponent", "EncounterComponent", "OwnedByComponent"]
     },

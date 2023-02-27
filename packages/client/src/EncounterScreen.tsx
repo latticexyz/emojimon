@@ -19,7 +19,7 @@ export const EncounterScreen = ({ encounterId }: Props) => {
   const {
     world,
     components: { Encounter, MonsterType },
-    api: { throwBall },
+    api: { throwBall, fleeEncounter },
   } = useMUD();
 
   const monster = useEntityQuery([
@@ -89,6 +89,23 @@ export const EncounterScreen = ({ encounterId }: Props) => {
           }}
         >
           ☄️ Throw
+        </button>
+        <button
+          type="button"
+          className="bg-stone-800 hover:ring rounded-lg px-4 py-2"
+          onClick={async () => {
+            const toastId = toast.loading("Running away…");
+            await fleeEncounter(encounterId);
+            toast.update(toastId, {
+              isLoading: false,
+              type: "default",
+              render: `You ran away!`,
+              autoClose: 5000,
+              closeButton: true,
+            });
+          }}
+        >
+          🏃‍♂️ Run
         </button>
       </div>
     </div>

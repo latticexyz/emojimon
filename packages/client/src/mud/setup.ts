@@ -178,6 +178,20 @@ export const setup = async () => {
     );
   };
 
+  const fleeEncounter = async (encounterId: EntityID) => {
+    const tx = await result.systems["system.EncounterFlee"].executeTyped(
+      encounterId
+    );
+    return new Promise<{ tx: typeof tx }>((resolve) => {
+      result.systemCallStreams["system.EncounterFlee"]
+        .pipe(filter((systemCall) => systemCall.tx.hash === tx.hash))
+        .pipe(first())
+        .subscribe(() => {
+          resolve({ tx });
+        });
+    });
+  };
+
   return {
     ...result,
     world,
@@ -191,6 +205,7 @@ export const setup = async () => {
       moveBy,
       joinGame,
       throwBall,
+      fleeEncounter,
     },
   };
 };
