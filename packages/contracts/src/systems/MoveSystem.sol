@@ -7,7 +7,9 @@ import { EncounterableComponent, ID as EncounterableComponentID } from "componen
 import { PositionComponent, ID as PositionComponentID, Coord } from "components/PositionComponent.sol";
 import { MovableComponent, ID as MovableComponentID } from "components/MovableComponent.sol";
 import { MapConfigComponent, ID as MapConfigComponentID, MapConfig } from "components/MapConfigComponent.sol";
+import { MonsterTypeComponent, ID as MonsterTypeComponentID } from "components/MonsterTypeComponent.sol";
 import { LibMap } from "libraries/LibMap.sol";
+import { MonsterType } from "../MonsterType.sol";
 
 uint256 constant ID = uint256(keccak256("system.Move"));
 
@@ -62,6 +64,13 @@ contract MoveSystem is System {
     uint256 encounterId = world.getUniqueEntityId();
     EncounterComponent encounter = EncounterComponent(getAddressById(components, EncounterComponentID));
     encounter.set(entityId, encounterId);
+
+    uint256 monsterId = world.getUniqueEntityId();
+    uint256 rand = uint256(keccak256(abi.encode(++entropyNonce, entityId, encounterId, monsterId, block.difficulty)));
+    MonsterType monsterType = MonsterType((rand % uint256(type(MonsterType).max)) + 1);
+    MonsterTypeComponent(getAddressById(components, MonsterTypeComponentID)).set(monsterId, monsterType);
+    encounter.set(monsterId, encounterId);
+
     return encounterId;
   }
 }
