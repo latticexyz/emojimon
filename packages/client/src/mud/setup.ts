@@ -80,6 +80,13 @@ export const setup = async () => {
       return;
     }
 
+    const inEncounter =
+      getComponentValue(components.Encounter, playerEntity)?.value != null;
+    if (inEncounter) {
+      console.warn("cannot move while in encounter");
+      return;
+    }
+
     const positionId = uuid();
     components.Position.addOverride(positionId, {
       entity: playerEntity,

@@ -1,5 +1,6 @@
 {
   "components": [
+    "EncounterComponent",
     "EncounterableComponent",
     "EncounterTriggerComponent",
     "MapConfigComponent",
@@ -16,7 +17,7 @@
     },
     {
       "name": "MoveSystem",
-      "writeAccess": ["PositionComponent"]
+      "writeAccess": ["EncounterComponent", "PositionComponent"]
     }
   ]
 }
