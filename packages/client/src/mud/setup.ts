@@ -61,10 +61,19 @@ export const setup = async () => {
   }
 
   const moveTo = async (x: number, y: number) => {
+    const mapConfig = getComponentValue(components.MapConfig, singletonEntity);
+    if (!mapConfig) {
+      console.warn("moveTo called before mapConfig loaded/initialized");
+      return;
+    }
+
+    const wrappedX = (x + mapConfig.width) % mapConfig.width;
+    const wrappedY = (y + mapConfig.height) % mapConfig.height;
+
     const positionId = uuid();
     components.Position.addOverride(positionId, {
       entity: playerEntity,
-      value: { x, y },
+      value: { x: wrappedX, y: wrappedY },
     });
 
     try {
