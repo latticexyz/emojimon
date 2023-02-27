@@ -11,6 +11,7 @@ export const contractComponents = {
     {
       width: Type.Number,
       height: Type.Number,
+      terrain: Type.String,
     },
     {
       id: "MapConfig",
