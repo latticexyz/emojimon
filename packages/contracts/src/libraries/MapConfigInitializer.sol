@@ -2,11 +2,15 @@
 pragma solidity >=0.8.0;
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { MapConfigComponent, ID as MapConfigComponentID, MapConfig } from "components/MapConfigComponent.sol";
+import { PositionComponent, ID as PositionComponentID, Coord } from "components/PositionComponent.sol";
+import { ObstructionComponent, ID as ObstructionComponentID } from "components/ObstructionComponent.sol";
 import { TerrainType } from "../TerrainType.sol";
 
 library MapConfigInitializer {
   function init(IWorld world) internal {
     MapConfigComponent mapConfig = MapConfigComponent(world.getComponent(MapConfigComponentID));
+    PositionComponent position = PositionComponent(world.getComponent(PositionComponentID));
+    ObstructionComponent obstruction = ObstructionComponent(world.getComponent(ObstructionComponentID));
 
     // Alias these to make it easier to draw the terrain map
     TerrainType O = TerrainType.None;
@@ -46,6 +50,12 @@ library MapConfigInitializer {
         if (terrainType == TerrainType.None) continue;
 
         terrain[(y * width) + x] = bytes1(uint8(terrainType));
+
+        if (terrainType == TerrainType.Boulder) {
+          uint256 entity = world.getUniqueEntityId();
+          position.set(entity, Coord(int32(x), int32(y)));
+          obstruction.set(entity);
+        }
       }
     }
 

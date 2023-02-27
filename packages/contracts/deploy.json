@@ -1,5 +1,11 @@
 {
-  "components": ["MapConfigComponent", "MovableComponent", "PlayerComponent", "PositionComponent"],
+  "components": [
+    "MapConfigComponent",
+    "MovableComponent",
+    "ObstructionComponent",
+    "PlayerComponent",
+    "PositionComponent"
+  ],
   "initializers": ["MapConfigInitializer"],
   "systems": [
     {

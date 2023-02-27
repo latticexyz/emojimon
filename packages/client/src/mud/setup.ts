@@ -8,6 +8,7 @@ import { EntityID, getComponentValue } from "@latticexyz/recs";
 import { createFaucetService, SingletonID } from "@latticexyz/network";
 import { ethers } from "ethers";
 import { uuid } from "@latticexyz/utils";
+import { Has, HasValue, runQuery } from "@latticexyz/recs";
 
 export type SetupResult = Awaited<ReturnType<typeof setup>>;
 
@@ -69,6 +70,15 @@ export const setup = async () => {
 
     const wrappedX = (x + mapConfig.width) % mapConfig.width;
     const wrappedY = (y + mapConfig.height) % mapConfig.height;
+
+    const obstructed = runQuery([
+      Has(components.Obstruction),
+      HasValue(components.Position, { x: wrappedX, y: wrappedY }),
+    ]);
+    if (obstructed.size > 0) {
+      console.warn("cannot move to obstructed space");
+      return;
+    }
 
     const positionId = uuid();
     components.Position.addOverride(positionId, {
