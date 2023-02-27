@@ -4,6 +4,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { MapConfigComponent, ID as MapConfigComponentID, MapConfig } from "components/MapConfigComponent.sol";
 import { PositionComponent, ID as PositionComponentID, Coord } from "components/PositionComponent.sol";
 import { ObstructionComponent, ID as ObstructionComponentID } from "components/ObstructionComponent.sol";
+import { EncounterTriggerComponent, ID as EncounterTriggerComponentID } from "components/EncounterTriggerComponent.sol";
 import { TerrainType } from "../TerrainType.sol";
 
 library MapConfigInitializer {
@@ -11,6 +12,9 @@ library MapConfigInitializer {
     MapConfigComponent mapConfig = MapConfigComponent(world.getComponent(MapConfigComponentID));
     PositionComponent position = PositionComponent(world.getComponent(PositionComponentID));
     ObstructionComponent obstruction = ObstructionComponent(world.getComponent(ObstructionComponentID));
+    EncounterTriggerComponent encounterTrigger = EncounterTriggerComponent(
+      world.getComponent(EncounterTriggerComponentID)
+    );
 
     // Alias these to make it easier to draw the terrain map
     TerrainType O = TerrainType.None;
@@ -55,6 +59,10 @@ library MapConfigInitializer {
           uint256 entity = world.getUniqueEntityId();
           position.set(entity, Coord(int32(x), int32(y)));
           obstruction.set(entity);
+        } else if (terrainType == TerrainType.TallGrass) {
+          uint256 entity = world.getUniqueEntityId();
+          position.set(entity, Coord(int32(x), int32(y)));
+          encounterTrigger.set(entity);
         }
       }
     }

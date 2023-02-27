@@ -1,5 +1,6 @@
 {
   "components": [
+    "EncounterTriggerComponent",
     "MapConfigComponent",
     "MovableComponent",
     "ObstructionComponent",
