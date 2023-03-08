@@ -1,15 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-// @NOTE: DO NOT EDIT!
-//        This file is a stub for LibDeploy.json to make imports work.
-//        The real LibDeploy.json is generated automatically when deploying
-//        via `mud deploy` or testing via `mud test`
+// NOTE:  THIS IS A STUB TO MAKE IMPORTS WORK.
+//        The real LibDeploy.sol is generated automatically
+//        when calling `mud test` or `mud deploy-contracts`.
+//        To manually generate the real LibDeploy.sol use
+//        `mud codegen-libdeploy`.
 
-import { World } from "solecs/World.sol";
+import {IWorld} from "solecs/interfaces/IWorld.sol";
 
 struct DeployResult {
-  World world;
+  IWorld world;
   address deployer;
 }
 
