@@ -1,5 +1,5 @@
-import React from "react";
 import ReactDOM from "react-dom/client";
+import { mount as mountDevTools } from "@latticexyz/dev-tools";
 import { App } from "./App";
 import { setup } from "./mud/setup";
 import { MUDProvider } from "./MUDContext";
@@ -15,4 +15,5 @@ setup().then((result) => {
       <App />
     </MUDProvider>
   );
+  mountDevTools();
 });
