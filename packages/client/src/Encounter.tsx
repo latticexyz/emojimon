@@ -1,26 +1,18 @@
 import { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { toast } from "react-toastify";
-import { Entity } from "@latticexyz/recs";
-import { useComponentValue } from "@latticexyz/react";
 import { useMUD } from "./MUDContext";
-import { MonsterType, monsterTypes } from "./monsterTypes";
 import { MonsterCatchResult } from "./monsterCatchResult";
 
 type Props = {
-  monster: Entity;
+  monsterName: string;
+  monsterEmoji: string;
 };
 
-export const EncounterScreen = ({ monster }: Props) => {
+export const Encounter = ({ monsterName, monsterEmoji }: Props) => {
   const {
-    components,
     systemCalls: { throwBall, fleeEncounter },
   } = useMUD();
-
-  // const monsterType = useComponentValue(Monster, monster)?.value as MonsterType;
-  // const { name: monsterName, emoji: monsterEmoji } = monsterTypes[monsterType];
-  const monsterName = "TODO";
-  const monsterEmoji = "⚠️";
 
   const [appear, setAppear] = useState(false);
   useEffect(() => {
