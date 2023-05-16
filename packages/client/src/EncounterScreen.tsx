@@ -14,7 +14,7 @@ type Props = {
 export const EncounterScreen = ({ monsters }: Props) => {
   const {
     components: { Monster },
-    api: { throwBall, fleeEncounter },
+    systemCalls: { throwBall, fleeEncounter },
   } = useMUD();
 
   // Just one monster for now

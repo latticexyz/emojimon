@@ -14,8 +14,8 @@ export const GameBoard = () => {
 
   const {
     components: { Encounter, Position, Player },
-    playerEntity,
-    api: { spawn },
+    network: { playerEntity },
+    systemCalls: { spawn },
   } = useMUD();
 
   useKeyboardMovement();

@@ -6,7 +6,7 @@ import { GameBoard } from "./GameBoard";
 export const App = () => {
   const {
     components: { LoadingState },
-    singletonEntity,
+    network: { singletonEntity },
   } = useMUD();
 
   const loadingState = useComponentValue(LoadingState, singletonEntity, {

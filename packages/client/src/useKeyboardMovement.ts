@@ -3,7 +3,7 @@ import { useMUD } from "./MUDContext";
 
 export const useKeyboardMovement = () => {
   const {
-    api: { moveBy },
+    systemCalls: { moveBy },
   } = useMUD();
 
   useEffect(() => {

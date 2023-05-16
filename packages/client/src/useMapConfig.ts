@@ -6,7 +6,7 @@ import { hexToArray } from "@latticexyz/utils";
 export const useMapConfig = () => {
   const {
     components: { MapConfig },
-    singletonEntity,
+    network: { singletonEntity },
   } = useMUD();
 
   const mapConfig = useComponentValue(MapConfig, singletonEntity);
