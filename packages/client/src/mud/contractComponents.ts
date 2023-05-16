@@ -21,6 +21,22 @@ export function defineContractComponents(world: World) {
         }
       );
     })(),
+    MonsterCatchAttempt: (() => {
+      const tableId = new TableId("", "MonsterCatchAtte");
+      return defineComponent(
+        world,
+        {
+          monster: RecsType.String,
+          result: RecsType.Number,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
     EncounterTrigger: (() => {
       const tableId = new TableId("", "EncounterTrigger");
       return defineComponent(

@@ -4,6 +4,7 @@ export default mudConfig({
   enums: {
     MonsterType: ["None", "Eagle", "Rat", "Caterpillar"],
     TerrainType: ["None", "TallGrass", "Boulder"],
+    MonsterCatchResult: ["Missed", "Caught", "Fled"],
   },
   tables: {
     Encounter: {
@@ -14,6 +15,17 @@ export default mudConfig({
       schema: {
         actionCount: "uint256",
         monsters: "bytes32[]",
+      },
+    },
+    MonsterCatchAttempt: {
+      ephemeral: true,
+      dataStruct: false,
+      primaryKeys: {
+        encounter: "bytes32",
+      },
+      schema: {
+        monster: "bytes32",
+        result: "MonsterCatchResult",
       },
     },
     EncounterTrigger: "bool",

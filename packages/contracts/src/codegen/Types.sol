@@ -14,3 +14,9 @@ enum TerrainType {
   TallGrass,
   Boulder
 }
+
+enum MonsterCatchResult {
+  Missed,
+  Caught,
+  Fled
+}

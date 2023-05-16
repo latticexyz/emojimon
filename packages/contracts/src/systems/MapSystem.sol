@@ -28,7 +28,7 @@ contract MapSystem is System {
   }
 
   function move(uint32 x, uint32 y) public {
-    bytes32 player = addressToEntityKey(address(_msgSender()));
+    bytes32 player = addressToEntityKey(_msgSender());
     require(Movable.get(player), "cannot move");
 
     (uint32 fromX, uint32 fromY) = Position.get(player);

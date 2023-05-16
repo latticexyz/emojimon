@@ -5,6 +5,7 @@ import { Entity } from "@latticexyz/recs";
 import { useComponentValue } from "@latticexyz/react";
 import { useMUD } from "./MUDContext";
 import { MonsterType, monsterTypes } from "./monsterTypes";
+import { MonsterCatchResult } from "./monsterCatchResult";
 
 type Props = {
   monsters: Entity[];
@@ -19,25 +20,8 @@ export const EncounterScreen = ({ monsters }: Props) => {
   // Just one monster for now
   const monster = monsters[0];
 
-  const monsterType =
-    monsterTypes[useComponentValue(Monster, monster)?.value as MonsterType];
-
-  // const monster = useEntityQuery([
-  //   HasValue(Encounter, { value: encounterId }),
-  //   Has(MonsterType),
-  // ]).map((entity) => {
-  //   const monsterType = getComponentValueStrict(MonsterType, entity)
-  //     .value as MonsterType;
-  //   return {
-  //     entity,
-  //     entityId: world.entities[entity],
-  //     monster: monsterTypes[monsterType],
-  //   };
-  // })[0];
-
-  // if (!monster) {
-  //   throw new Error("No monster found in encounter");
-  // }
+  const monsterType = useComponentValue(Monster, monster)?.value as MonsterType;
+  const { name: monsterName, emoji: monsterEmoji } = monsterTypes[monsterType];
 
   const [appear, setAppear] = useState(false);
   useEffect(() => {
@@ -51,8 +35,8 @@ export const EncounterScreen = ({ monsters }: Props) => {
         appear ? "opacity-100" : "opacity-0"
       )}
     >
-      <div className="text-8xl animate-bounce">{monsterType.emoji}</div>
-      <div>A wild {monsterType.name} appears!</div>
+      <div className="text-8xl animate-bounce">{monsterEmoji}</div>
+      <div>A wild {monsterName} appears!</div>
 
       <div className="flex gap-2">
         <button
@@ -60,24 +44,24 @@ export const EncounterScreen = ({ monsters }: Props) => {
           className="bg-stone-600 hover:ring rounded-lg px-4 py-2"
           onClick={async () => {
             const toastId = toast.loading("Throwing emojiball…");
-            const status = await throwBall();
-            if (status === "caught") {
+            const result = await throwBall();
+            if (result === MonsterCatchResult.Caught) {
               toast.update(toastId, {
                 isLoading: false,
                 type: "success",
-                render: `You caught the ${monsterType.name}!`,
+                render: `You caught the ${monsterName}!`,
                 autoClose: 5000,
                 closeButton: true,
               });
-            } else if (status === "fled") {
+            } else if (result === MonsterCatchResult.Fled) {
               toast.update(toastId, {
                 isLoading: false,
-                type: "error",
-                render: `Oh no, the ${monsterType.name} fled!`,
+                type: "default",
+                render: `Oh no, the ${monsterName} fled!`,
                 autoClose: 5000,
                 closeButton: true,
               });
-            } else {
+            } else if (result === MonsterCatchResult.Missed) {
               toast.update(toastId, {
                 isLoading: false,
                 type: "error",
@@ -85,6 +69,10 @@ export const EncounterScreen = ({ monsters }: Props) => {
                 autoClose: 5000,
                 closeButton: true,
               });
+            } else {
+              throw new Error(
+                `Unexpected catch attempt result: ${MonsterCatchResult[result]}`
+              );
             }
           }}
         >

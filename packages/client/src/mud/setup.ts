@@ -1,9 +1,5 @@
 import { setupMUDV2Network } from "@latticexyz/std-client";
-import {
-  createFastTxExecutor,
-  createFaucetService,
-  normalizeEntityID,
-} from "@latticexyz/network";
+import { createFastTxExecutor, createFaucetService } from "@latticexyz/network";
 import { getNetworkConfig } from "./getNetworkConfig";
 import { defineContractComponents } from "./contractComponents";
 import { clientComponents } from "./clientComponents";
@@ -17,21 +13,26 @@ import {
   runQuery,
   Has,
   HasValue,
-  Entity,
 } from "@latticexyz/recs";
 import { uuid, awaitStreamValue } from "@latticexyz/utils";
+import storeConfig from "contracts/mud.config";
+import { MonsterCatchResult } from "../monsterCatchResult";
 
 export type SetupResult = Awaited<ReturnType<typeof setup>>;
 
 export async function setup() {
   const contractComponents = defineContractComponents(world);
   const networkConfig = await getNetworkConfig();
-  const result = await setupMUDV2Network<typeof contractComponents>({
+  const result = await setupMUDV2Network<
+    typeof contractComponents,
+    typeof storeConfig
+  >({
     networkConfig,
     world,
     contractComponents,
     syncThread: "main",
     worldAbi: IWorld__factory.abi,
+    storeConfig,
   });
 
   result.startSync();
@@ -233,23 +234,15 @@ export async function setup() {
     const tx = await worldSend("throwBall", []);
     await awaitStreamValue(result.txReduced$, (txHash) => txHash === tx.hash);
 
-    const hasCaught = encounter.monsters.some((monster) => {
-      const owner =
-        monster &&
-        getComponentValue(components.OwnedBy, monster as Entity)?.value;
-      return (
-        monster && owner && normalizeEntityID(owner) === result.playerEntity
-      );
-    });
-    if (hasCaught) {
-      return "caught";
+    const catchAttempt = getComponentValue(
+      components.MonsterCatchAttempt,
+      player
+    );
+    if (!catchAttempt) {
+      throw new Error("no catch attempt found");
     }
 
-    if (!getComponentValue(components.Encounter, player)) {
-      return "fled";
-    }
-
-    return "miss";
+    return catchAttempt.result as MonsterCatchResult;
   };
 
   const fleeEncounter = async () => {
