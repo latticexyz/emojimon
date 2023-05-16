@@ -74,20 +74,20 @@ library MonsterCatchAttempt {
   function emitEphemeral(bytes32 encounter, bytes32 monster, MonsterCatchResult result) internal {
     bytes memory _data = encode(monster, result);
 
-    bytes32[] memory _primaryKeys = new bytes32[](1);
-    _primaryKeys[0] = bytes32((encounter));
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32((encounter));
 
-    StoreSwitch.emitEphemeralRecord(_tableId, _primaryKeys, _data);
+    StoreSwitch.emitEphemeralRecord(_tableId, _keyTuple, _data);
   }
 
   /** Emit the ephemeral event using individual values (using the specified store) */
   function emitEphemeral(IStore _store, bytes32 encounter, bytes32 monster, MonsterCatchResult result) internal {
     bytes memory _data = encode(monster, result);
 
-    bytes32[] memory _primaryKeys = new bytes32[](1);
-    _primaryKeys[0] = bytes32((encounter));
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32((encounter));
 
-    _store.emitEphemeralRecord(_tableId, _primaryKeys, _data);
+    _store.emitEphemeralRecord(_tableId, _keyTuple, _data);
   }
 
   /** Tightly pack full data using this table's schema */
@@ -96,8 +96,8 @@ library MonsterCatchAttempt {
   }
 
   /** Encode keys as a bytes32 array using this table's schema */
-  function encodeKeyTuple(bytes32 encounter) internal pure returns (bytes32[] memory _primaryKeys) {
-    _primaryKeys = new bytes32[](1);
-    _primaryKeys[0] = bytes32((encounter));
+  function encodeKeyTuple(bytes32 encounter) internal pure returns (bytes32[] memory _keyTuple) {
+    _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32((encounter));
   }
 }

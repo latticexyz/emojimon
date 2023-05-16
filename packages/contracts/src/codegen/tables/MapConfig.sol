@@ -70,188 +70,181 @@ library MapConfig {
 
   /** Get width */
   function getWidth() internal view returns (uint32 width) {
-    bytes32[] memory _primaryKeys = new bytes32[](0);
+    bytes32[] memory _keyTuple = new bytes32[](0);
 
-    bytes memory _blob = StoreSwitch.getField(_tableId, _primaryKeys, 0);
+    bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 0);
     return (uint32(Bytes.slice4(_blob, 0)));
   }
 
   /** Get width (using the specified store) */
   function getWidth(IStore _store) internal view returns (uint32 width) {
-    bytes32[] memory _primaryKeys = new bytes32[](0);
+    bytes32[] memory _keyTuple = new bytes32[](0);
 
-    bytes memory _blob = _store.getField(_tableId, _primaryKeys, 0);
+    bytes memory _blob = _store.getField(_tableId, _keyTuple, 0);
     return (uint32(Bytes.slice4(_blob, 0)));
   }
 
   /** Set width */
   function setWidth(uint32 width) internal {
-    bytes32[] memory _primaryKeys = new bytes32[](0);
+    bytes32[] memory _keyTuple = new bytes32[](0);
 
-    StoreSwitch.setField(_tableId, _primaryKeys, 0, abi.encodePacked((width)));
+    StoreSwitch.setField(_tableId, _keyTuple, 0, abi.encodePacked((width)));
   }
 
   /** Set width (using the specified store) */
   function setWidth(IStore _store, uint32 width) internal {
-    bytes32[] memory _primaryKeys = new bytes32[](0);
+    bytes32[] memory _keyTuple = new bytes32[](0);
 
-    _store.setField(_tableId, _primaryKeys, 0, abi.encodePacked((width)));
+    _store.setField(_tableId, _keyTuple, 0, abi.encodePacked((width)));
   }
 
   /** Get height */
   function getHeight() internal view returns (uint32 height) {
-    bytes32[] memory _primaryKeys = new bytes32[](0);
+    bytes32[] memory _keyTuple = new bytes32[](0);
 
-    bytes memory _blob = StoreSwitch.getField(_tableId, _primaryKeys, 1);
+    bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 1);
     return (uint32(Bytes.slice4(_blob, 0)));
   }
 
   /** Get height (using the specified store) */
   function getHeight(IStore _store) internal view returns (uint32 height) {
-    bytes32[] memory _primaryKeys = new bytes32[](0);
+    bytes32[] memory _keyTuple = new bytes32[](0);
 
-    bytes memory _blob = _store.getField(_tableId, _primaryKeys, 1);
+    bytes memory _blob = _store.getField(_tableId, _keyTuple, 1);
     return (uint32(Bytes.slice4(_blob, 0)));
   }
 
   /** Set height */
   function setHeight(uint32 height) internal {
-    bytes32[] memory _primaryKeys = new bytes32[](0);
+    bytes32[] memory _keyTuple = new bytes32[](0);
 
-    StoreSwitch.setField(_tableId, _primaryKeys, 1, abi.encodePacked((height)));
+    StoreSwitch.setField(_tableId, _keyTuple, 1, abi.encodePacked((height)));
   }
 
   /** Set height (using the specified store) */
   function setHeight(IStore _store, uint32 height) internal {
-    bytes32[] memory _primaryKeys = new bytes32[](0);
+    bytes32[] memory _keyTuple = new bytes32[](0);
 
-    _store.setField(_tableId, _primaryKeys, 1, abi.encodePacked((height)));
+    _store.setField(_tableId, _keyTuple, 1, abi.encodePacked((height)));
   }
 
   /** Get terrain */
   function getTerrain() internal view returns (bytes memory terrain) {
-    bytes32[] memory _primaryKeys = new bytes32[](0);
+    bytes32[] memory _keyTuple = new bytes32[](0);
 
-    bytes memory _blob = StoreSwitch.getField(_tableId, _primaryKeys, 2);
+    bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 2);
     return (bytes(_blob));
   }
 
   /** Get terrain (using the specified store) */
   function getTerrain(IStore _store) internal view returns (bytes memory terrain) {
-    bytes32[] memory _primaryKeys = new bytes32[](0);
+    bytes32[] memory _keyTuple = new bytes32[](0);
 
-    bytes memory _blob = _store.getField(_tableId, _primaryKeys, 2);
+    bytes memory _blob = _store.getField(_tableId, _keyTuple, 2);
     return (bytes(_blob));
   }
 
   /** Set terrain */
   function setTerrain(bytes memory terrain) internal {
-    bytes32[] memory _primaryKeys = new bytes32[](0);
+    bytes32[] memory _keyTuple = new bytes32[](0);
 
-    StoreSwitch.setField(_tableId, _primaryKeys, 2, bytes((terrain)));
+    StoreSwitch.setField(_tableId, _keyTuple, 2, bytes((terrain)));
   }
 
   /** Set terrain (using the specified store) */
   function setTerrain(IStore _store, bytes memory terrain) internal {
-    bytes32[] memory _primaryKeys = new bytes32[](0);
+    bytes32[] memory _keyTuple = new bytes32[](0);
 
-    _store.setField(_tableId, _primaryKeys, 2, bytes((terrain)));
+    _store.setField(_tableId, _keyTuple, 2, bytes((terrain)));
   }
 
   /** Get the length of terrain */
   function lengthTerrain() internal view returns (uint256) {
-    bytes32[] memory _primaryKeys = new bytes32[](0);
+    bytes32[] memory _keyTuple = new bytes32[](0);
 
-    uint256 _byteLength = StoreSwitch.getFieldLength(_tableId, _primaryKeys, 2, getSchema());
+    uint256 _byteLength = StoreSwitch.getFieldLength(_tableId, _keyTuple, 2, getSchema());
     return _byteLength / 1;
   }
 
   /** Get the length of terrain (using the specified store) */
   function lengthTerrain(IStore _store) internal view returns (uint256) {
-    bytes32[] memory _primaryKeys = new bytes32[](0);
+    bytes32[] memory _keyTuple = new bytes32[](0);
 
-    uint256 _byteLength = _store.getFieldLength(_tableId, _primaryKeys, 2, getSchema());
+    uint256 _byteLength = _store.getFieldLength(_tableId, _keyTuple, 2, getSchema());
     return _byteLength / 1;
   }
 
   /** Get an item of terrain (unchecked, returns invalid data if index overflows) */
   function getItemTerrain(uint256 _index) internal view returns (bytes memory) {
-    bytes32[] memory _primaryKeys = new bytes32[](0);
+    bytes32[] memory _keyTuple = new bytes32[](0);
 
-    bytes memory _blob = StoreSwitch.getFieldSlice(
-      _tableId,
-      _primaryKeys,
-      2,
-      getSchema(),
-      _index * 1,
-      (_index + 1) * 1
-    );
+    bytes memory _blob = StoreSwitch.getFieldSlice(_tableId, _keyTuple, 2, getSchema(), _index * 1, (_index + 1) * 1);
     return (bytes(_blob));
   }
 
   /** Get an item of terrain (using the specified store) (unchecked, returns invalid data if index overflows) */
   function getItemTerrain(IStore _store, uint256 _index) internal view returns (bytes memory) {
-    bytes32[] memory _primaryKeys = new bytes32[](0);
+    bytes32[] memory _keyTuple = new bytes32[](0);
 
-    bytes memory _blob = _store.getFieldSlice(_tableId, _primaryKeys, 2, getSchema(), _index * 1, (_index + 1) * 1);
+    bytes memory _blob = _store.getFieldSlice(_tableId, _keyTuple, 2, getSchema(), _index * 1, (_index + 1) * 1);
     return (bytes(_blob));
   }
 
   /** Push a slice to terrain */
   function pushTerrain(bytes memory _slice) internal {
-    bytes32[] memory _primaryKeys = new bytes32[](0);
+    bytes32[] memory _keyTuple = new bytes32[](0);
 
-    StoreSwitch.pushToField(_tableId, _primaryKeys, 2, bytes((_slice)));
+    StoreSwitch.pushToField(_tableId, _keyTuple, 2, bytes((_slice)));
   }
 
   /** Push a slice to terrain (using the specified store) */
   function pushTerrain(IStore _store, bytes memory _slice) internal {
-    bytes32[] memory _primaryKeys = new bytes32[](0);
+    bytes32[] memory _keyTuple = new bytes32[](0);
 
-    _store.pushToField(_tableId, _primaryKeys, 2, bytes((_slice)));
+    _store.pushToField(_tableId, _keyTuple, 2, bytes((_slice)));
   }
 
   /** Pop a slice from terrain */
   function popTerrain() internal {
-    bytes32[] memory _primaryKeys = new bytes32[](0);
+    bytes32[] memory _keyTuple = new bytes32[](0);
 
-    StoreSwitch.popFromField(_tableId, _primaryKeys, 2, 1);
+    StoreSwitch.popFromField(_tableId, _keyTuple, 2, 1);
   }
 
   /** Pop a slice from terrain (using the specified store) */
   function popTerrain(IStore _store) internal {
-    bytes32[] memory _primaryKeys = new bytes32[](0);
+    bytes32[] memory _keyTuple = new bytes32[](0);
 
-    _store.popFromField(_tableId, _primaryKeys, 2, 1);
+    _store.popFromField(_tableId, _keyTuple, 2, 1);
   }
 
   /** Update a slice of terrain at `_index` */
   function updateTerrain(uint256 _index, bytes memory _slice) internal {
-    bytes32[] memory _primaryKeys = new bytes32[](0);
+    bytes32[] memory _keyTuple = new bytes32[](0);
 
-    StoreSwitch.updateInField(_tableId, _primaryKeys, 2, _index * 1, bytes((_slice)));
+    StoreSwitch.updateInField(_tableId, _keyTuple, 2, _index * 1, bytes((_slice)));
   }
 
   /** Update a slice of terrain (using the specified store) at `_index` */
   function updateTerrain(IStore _store, uint256 _index, bytes memory _slice) internal {
-    bytes32[] memory _primaryKeys = new bytes32[](0);
+    bytes32[] memory _keyTuple = new bytes32[](0);
 
-    _store.updateInField(_tableId, _primaryKeys, 2, _index * 1, bytes((_slice)));
+    _store.updateInField(_tableId, _keyTuple, 2, _index * 1, bytes((_slice)));
   }
 
   /** Get the full data */
   function get() internal view returns (uint32 width, uint32 height, bytes memory terrain) {
-    bytes32[] memory _primaryKeys = new bytes32[](0);
+    bytes32[] memory _keyTuple = new bytes32[](0);
 
-    bytes memory _blob = StoreSwitch.getRecord(_tableId, _primaryKeys, getSchema());
+    bytes memory _blob = StoreSwitch.getRecord(_tableId, _keyTuple, getSchema());
     return decode(_blob);
   }
 
   /** Get the full data (using the specified store) */
   function get(IStore _store) internal view returns (uint32 width, uint32 height, bytes memory terrain) {
-    bytes32[] memory _primaryKeys = new bytes32[](0);
+    bytes32[] memory _keyTuple = new bytes32[](0);
 
-    bytes memory _blob = _store.getRecord(_tableId, _primaryKeys, getSchema());
+    bytes memory _blob = _store.getRecord(_tableId, _keyTuple, getSchema());
     return decode(_blob);
   }
 
@@ -259,18 +252,18 @@ library MapConfig {
   function set(uint32 width, uint32 height, bytes memory terrain) internal {
     bytes memory _data = encode(width, height, terrain);
 
-    bytes32[] memory _primaryKeys = new bytes32[](0);
+    bytes32[] memory _keyTuple = new bytes32[](0);
 
-    StoreSwitch.setRecord(_tableId, _primaryKeys, _data);
+    StoreSwitch.setRecord(_tableId, _keyTuple, _data);
   }
 
   /** Set the full data using individual values (using the specified store) */
   function set(IStore _store, uint32 width, uint32 height, bytes memory terrain) internal {
     bytes memory _data = encode(width, height, terrain);
 
-    bytes32[] memory _primaryKeys = new bytes32[](0);
+    bytes32[] memory _keyTuple = new bytes32[](0);
 
-    _store.setRecord(_tableId, _primaryKeys, _data);
+    _store.setRecord(_tableId, _keyTuple, _data);
   }
 
   /** Decode the tightly packed blob using this table's schema */
@@ -304,21 +297,21 @@ library MapConfig {
   }
 
   /** Encode keys as a bytes32 array using this table's schema */
-  function encodeKeyTuple() internal pure returns (bytes32[] memory _primaryKeys) {
-    _primaryKeys = new bytes32[](0);
+  function encodeKeyTuple() internal pure returns (bytes32[] memory _keyTuple) {
+    _keyTuple = new bytes32[](0);
   }
 
   /* Delete all data for given keys */
   function deleteRecord() internal {
-    bytes32[] memory _primaryKeys = new bytes32[](0);
+    bytes32[] memory _keyTuple = new bytes32[](0);
 
-    StoreSwitch.deleteRecord(_tableId, _primaryKeys);
+    StoreSwitch.deleteRecord(_tableId, _keyTuple);
   }
 
   /* Delete all data for given keys (using the specified store) */
   function deleteRecord(IStore _store) internal {
-    bytes32[] memory _primaryKeys = new bytes32[](0);
+    bytes32[] memory _keyTuple = new bytes32[](0);
 
-    _store.deleteRecord(_tableId, _primaryKeys);
+    _store.deleteRecord(_tableId, _keyTuple);
   }
 }

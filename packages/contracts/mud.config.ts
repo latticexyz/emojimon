@@ -9,7 +9,7 @@ export default mudConfig({
   tables: {
     Encounter: {
       dataStruct: false,
-      primaryKeys: {
+      keySchema: {
         player: "bytes32",
       },
       schema: {
@@ -20,7 +20,7 @@ export default mudConfig({
     MonsterCatchAttempt: {
       ephemeral: true,
       dataStruct: false,
-      primaryKeys: {
+      keySchema: {
         encounter: "bytes32",
       },
       schema: {
@@ -31,7 +31,7 @@ export default mudConfig({
     EncounterTrigger: "bool",
     Encounterable: "bool",
     MapConfig: {
-      primaryKeys: {},
+      keySchema: {},
       dataStruct: false,
       schema: {
         width: "uint32",
