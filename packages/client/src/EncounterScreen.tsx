@@ -8,17 +8,14 @@ import { MonsterType, monsterTypes } from "./monsterTypes";
 import { MonsterCatchResult } from "./monsterCatchResult";
 
 type Props = {
-  monsters: Entity[];
+  monster: Entity;
 };
 
-export const EncounterScreen = ({ monsters }: Props) => {
+export const EncounterScreen = ({ monster }: Props) => {
   const {
     components: { Monster },
     systemCalls: { throwBall, fleeEncounter },
   } = useMUD();
-
-  // Just one monster for now
-  const monster = monsters[0];
 
   const monsterType = useComponentValue(Monster, monster)?.value as MonsterType;
   const { name: monsterName, emoji: monsterEmoji } = monsterTypes[monsterType];

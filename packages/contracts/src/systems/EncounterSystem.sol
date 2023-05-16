@@ -6,18 +6,13 @@ import { MonsterCatchResult } from "../codegen/Types.sol";
 import { addressToEntityKey } from "../addressToEntityKey.sol";
 
 contract EncounterSystem is System {
-  uint256 internal entropyNonce = 0;
-
   function throwBall() public {
     bytes32 player = addressToEntityKey(_msgSender());
 
-    (uint256 actionCount, bytes32[] memory monsters) = Encounter.get(player);
+    (uint256 actionCount, bytes32 monster) = Encounter.get(player);
     require(actionCount != 0, "not in this encounter");
 
-    // TODO: support multiple monsters? i.e. throw at a specific monster
-    bytes32 monster = monsters[0];
-
-    uint256 rand = uint256(keccak256(abi.encode(player, monster, actionCount, block.difficulty)));
+    uint256 rand = uint256(keccak256(abi.encode(player, monster, actionCount, blockhash(block.number - 1), block.difficulty)));
     if (rand % 2 == 0) {
       // 50% chance to catch monster
       MonsterCatchAttempt.emitEphemeral(player, monster, MonsterCatchResult.Caught);

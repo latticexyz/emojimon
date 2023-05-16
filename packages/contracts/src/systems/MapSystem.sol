@@ -7,8 +7,6 @@ import { addressToEntityKey } from "../addressToEntityKey.sol";
 import { positionToEntityKey } from "../positionToEntityKey.sol";
 
 contract MapSystem is System {
-  uint256 internal entropyNonce = 0;
-
   function spawn(uint32 x, uint32 y) public {
     bytes32 player = addressToEntityKey(address(_msgSender()));
     require(!Player.get(player), "already spawned");
@@ -49,7 +47,7 @@ contract MapSystem is System {
 
     // TODO: move to EncounterSystem?
     if (Encounterable.get(player) && EncounterTrigger.get(position)) {
-      uint256 rand = uint256(keccak256(abi.encode(++entropyNonce, player, position, block.difficulty)));
+      uint256 rand = uint256(keccak256(abi.encode(player, position, blockhash(block.number - 1), block.difficulty)));
       if (rand % 5 == 0) {
         startEncounter(player);
       }
@@ -64,12 +62,9 @@ contract MapSystem is System {
 
   // TODO: move to EncounterSystem?
   function startEncounter(bytes32 player) internal {
-    bytes32 monster = keccak256(abi.encode(++entropyNonce, player, block.difficulty));
+    bytes32 monster = keccak256(abi.encode(player, blockhash(block.number - 1), block.difficulty));
     MonsterType monsterType = MonsterType((uint256(monster) % uint256(type(MonsterType).max)) + 1);
     Monster.set(monster, monsterType);
-
-    bytes32[] memory monsters = new bytes32[](1);
-    monsters[0] = monster;
-    Encounter.set(player, 1, monsters);
+    Encounter.set(player, 1, monster);
   }
 }

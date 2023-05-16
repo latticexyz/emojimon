@@ -14,7 +14,7 @@ export default mudConfig({
       },
       schema: {
         actionCount: "uint256",
-        monsters: "bytes32[]",
+        monster: "bytes32",
       },
     },
     MonsterCatchAttempt: {

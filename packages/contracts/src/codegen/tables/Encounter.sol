@@ -25,7 +25,7 @@ library Encounter {
   function getSchema() internal pure returns (Schema) {
     SchemaType[] memory _schema = new SchemaType[](2);
     _schema[0] = SchemaType.UINT256;
-    _schema[1] = SchemaType.BYTES32_ARRAY;
+    _schema[1] = SchemaType.BYTES32;
 
     return SchemaLib.encode(_schema);
   }
@@ -41,7 +41,7 @@ library Encounter {
   function getMetadata() internal pure returns (string memory, string[] memory) {
     string[] memory _fieldNames = new string[](2);
     _fieldNames[0] = "actionCount";
-    _fieldNames[1] = "monsters";
+    _fieldNames[1] = "monster";
     return ("Encounter", _fieldNames);
   }
 
@@ -101,133 +101,42 @@ library Encounter {
     _store.setField(_tableId, _primaryKeys, 0, abi.encodePacked((actionCount)));
   }
 
-  /** Get monsters */
-  function getMonsters(bytes32 player) internal view returns (bytes32[] memory monsters) {
+  /** Get monster */
+  function getMonster(bytes32 player) internal view returns (bytes32 monster) {
     bytes32[] memory _primaryKeys = new bytes32[](1);
     _primaryKeys[0] = bytes32((player));
 
     bytes memory _blob = StoreSwitch.getField(_tableId, _primaryKeys, 1);
-    return (SliceLib.getSubslice(_blob, 0, _blob.length).decodeArray_bytes32());
+    return (Bytes.slice32(_blob, 0));
   }
 
-  /** Get monsters (using the specified store) */
-  function getMonsters(IStore _store, bytes32 player) internal view returns (bytes32[] memory monsters) {
+  /** Get monster (using the specified store) */
+  function getMonster(IStore _store, bytes32 player) internal view returns (bytes32 monster) {
     bytes32[] memory _primaryKeys = new bytes32[](1);
     _primaryKeys[0] = bytes32((player));
 
     bytes memory _blob = _store.getField(_tableId, _primaryKeys, 1);
-    return (SliceLib.getSubslice(_blob, 0, _blob.length).decodeArray_bytes32());
-  }
-
-  /** Set monsters */
-  function setMonsters(bytes32 player, bytes32[] memory monsters) internal {
-    bytes32[] memory _primaryKeys = new bytes32[](1);
-    _primaryKeys[0] = bytes32((player));
-
-    StoreSwitch.setField(_tableId, _primaryKeys, 1, EncodeArray.encode((monsters)));
-  }
-
-  /** Set monsters (using the specified store) */
-  function setMonsters(IStore _store, bytes32 player, bytes32[] memory monsters) internal {
-    bytes32[] memory _primaryKeys = new bytes32[](1);
-    _primaryKeys[0] = bytes32((player));
-
-    _store.setField(_tableId, _primaryKeys, 1, EncodeArray.encode((monsters)));
-  }
-
-  /** Get the length of monsters */
-  function lengthMonsters(bytes32 player) internal view returns (uint256) {
-    bytes32[] memory _primaryKeys = new bytes32[](1);
-    _primaryKeys[0] = bytes32((player));
-
-    uint256 _byteLength = StoreSwitch.getFieldLength(_tableId, _primaryKeys, 1, getSchema());
-    return _byteLength / 32;
-  }
-
-  /** Get the length of monsters (using the specified store) */
-  function lengthMonsters(IStore _store, bytes32 player) internal view returns (uint256) {
-    bytes32[] memory _primaryKeys = new bytes32[](1);
-    _primaryKeys[0] = bytes32((player));
-
-    uint256 _byteLength = _store.getFieldLength(_tableId, _primaryKeys, 1, getSchema());
-    return _byteLength / 32;
-  }
-
-  /** Get an item of monsters (unchecked, returns invalid data if index overflows) */
-  function getItemMonsters(bytes32 player, uint256 _index) internal view returns (bytes32) {
-    bytes32[] memory _primaryKeys = new bytes32[](1);
-    _primaryKeys[0] = bytes32((player));
-
-    bytes memory _blob = StoreSwitch.getFieldSlice(
-      _tableId,
-      _primaryKeys,
-      1,
-      getSchema(),
-      _index * 32,
-      (_index + 1) * 32
-    );
     return (Bytes.slice32(_blob, 0));
   }
 
-  /** Get an item of monsters (using the specified store) (unchecked, returns invalid data if index overflows) */
-  function getItemMonsters(IStore _store, bytes32 player, uint256 _index) internal view returns (bytes32) {
+  /** Set monster */
+  function setMonster(bytes32 player, bytes32 monster) internal {
     bytes32[] memory _primaryKeys = new bytes32[](1);
     _primaryKeys[0] = bytes32((player));
 
-    bytes memory _blob = _store.getFieldSlice(_tableId, _primaryKeys, 1, getSchema(), _index * 32, (_index + 1) * 32);
-    return (Bytes.slice32(_blob, 0));
+    StoreSwitch.setField(_tableId, _primaryKeys, 1, abi.encodePacked((monster)));
   }
 
-  /** Push an element to monsters */
-  function pushMonsters(bytes32 player, bytes32 _element) internal {
+  /** Set monster (using the specified store) */
+  function setMonster(IStore _store, bytes32 player, bytes32 monster) internal {
     bytes32[] memory _primaryKeys = new bytes32[](1);
     _primaryKeys[0] = bytes32((player));
 
-    StoreSwitch.pushToField(_tableId, _primaryKeys, 1, abi.encodePacked((_element)));
-  }
-
-  /** Push an element to monsters (using the specified store) */
-  function pushMonsters(IStore _store, bytes32 player, bytes32 _element) internal {
-    bytes32[] memory _primaryKeys = new bytes32[](1);
-    _primaryKeys[0] = bytes32((player));
-
-    _store.pushToField(_tableId, _primaryKeys, 1, abi.encodePacked((_element)));
-  }
-
-  /** Pop an element from monsters */
-  function popMonsters(bytes32 player) internal {
-    bytes32[] memory _primaryKeys = new bytes32[](1);
-    _primaryKeys[0] = bytes32((player));
-
-    StoreSwitch.popFromField(_tableId, _primaryKeys, 1, 32);
-  }
-
-  /** Pop an element from monsters (using the specified store) */
-  function popMonsters(IStore _store, bytes32 player) internal {
-    bytes32[] memory _primaryKeys = new bytes32[](1);
-    _primaryKeys[0] = bytes32((player));
-
-    _store.popFromField(_tableId, _primaryKeys, 1, 32);
-  }
-
-  /** Update an element of monsters at `_index` */
-  function updateMonsters(bytes32 player, uint256 _index, bytes32 _element) internal {
-    bytes32[] memory _primaryKeys = new bytes32[](1);
-    _primaryKeys[0] = bytes32((player));
-
-    StoreSwitch.updateInField(_tableId, _primaryKeys, 1, _index * 32, abi.encodePacked((_element)));
-  }
-
-  /** Update an element of monsters (using the specified store) at `_index` */
-  function updateMonsters(IStore _store, bytes32 player, uint256 _index, bytes32 _element) internal {
-    bytes32[] memory _primaryKeys = new bytes32[](1);
-    _primaryKeys[0] = bytes32((player));
-
-    _store.updateInField(_tableId, _primaryKeys, 1, _index * 32, abi.encodePacked((_element)));
+    _store.setField(_tableId, _primaryKeys, 1, abi.encodePacked((monster)));
   }
 
   /** Get the full data */
-  function get(bytes32 player) internal view returns (uint256 actionCount, bytes32[] memory monsters) {
+  function get(bytes32 player) internal view returns (uint256 actionCount, bytes32 monster) {
     bytes32[] memory _primaryKeys = new bytes32[](1);
     _primaryKeys[0] = bytes32((player));
 
@@ -236,7 +145,7 @@ library Encounter {
   }
 
   /** Get the full data (using the specified store) */
-  function get(IStore _store, bytes32 player) internal view returns (uint256 actionCount, bytes32[] memory monsters) {
+  function get(IStore _store, bytes32 player) internal view returns (uint256 actionCount, bytes32 monster) {
     bytes32[] memory _primaryKeys = new bytes32[](1);
     _primaryKeys[0] = bytes32((player));
 
@@ -245,8 +154,8 @@ library Encounter {
   }
 
   /** Set the full data using individual values */
-  function set(bytes32 player, uint256 actionCount, bytes32[] memory monsters) internal {
-    bytes memory _data = encode(actionCount, monsters);
+  function set(bytes32 player, uint256 actionCount, bytes32 monster) internal {
+    bytes memory _data = encode(actionCount, monster);
 
     bytes32[] memory _primaryKeys = new bytes32[](1);
     _primaryKeys[0] = bytes32((player));
@@ -255,8 +164,8 @@ library Encounter {
   }
 
   /** Set the full data using individual values (using the specified store) */
-  function set(IStore _store, bytes32 player, uint256 actionCount, bytes32[] memory monsters) internal {
-    bytes memory _data = encode(actionCount, monsters);
+  function set(IStore _store, bytes32 player, uint256 actionCount, bytes32 monster) internal {
+    bytes memory _data = encode(actionCount, monster);
 
     bytes32[] memory _primaryKeys = new bytes32[](1);
     _primaryKeys[0] = bytes32((player));
@@ -265,31 +174,15 @@ library Encounter {
   }
 
   /** Decode the tightly packed blob using this table's schema */
-  function decode(bytes memory _blob) internal view returns (uint256 actionCount, bytes32[] memory monsters) {
-    // 32 is the total byte length of static data
-    PackedCounter _encodedLengths = PackedCounter.wrap(Bytes.slice32(_blob, 32));
-
+  function decode(bytes memory _blob) internal pure returns (uint256 actionCount, bytes32 monster) {
     actionCount = (uint256(Bytes.slice32(_blob, 0)));
 
-    // Store trims the blob if dynamic fields are all empty
-    if (_blob.length > 32) {
-      uint256 _start;
-      // skip static data length + dynamic lengths word
-      uint256 _end = 64;
-
-      _start = _end;
-      _end += _encodedLengths.atIndex(0);
-      monsters = (SliceLib.getSubslice(_blob, _start, _end).decodeArray_bytes32());
-    }
+    monster = (Bytes.slice32(_blob, 32));
   }
 
   /** Tightly pack full data using this table's schema */
-  function encode(uint256 actionCount, bytes32[] memory monsters) internal view returns (bytes memory) {
-    uint16[] memory _counters = new uint16[](1);
-    _counters[0] = uint16(monsters.length * 32);
-    PackedCounter _encodedLengths = PackedCounterLib.pack(_counters);
-
-    return abi.encodePacked(actionCount, _encodedLengths.unwrap(), EncodeArray.encode((monsters)));
+  function encode(uint256 actionCount, bytes32 monster) internal view returns (bytes memory) {
+    return abi.encodePacked(actionCount, monster);
   }
 
   /** Encode keys as a bytes32 array using this table's schema */

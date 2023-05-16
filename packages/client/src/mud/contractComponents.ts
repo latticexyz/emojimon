@@ -11,7 +11,7 @@ export function defineContractComponents(world: World) {
         world,
         {
           actionCount: RecsType.BigInt,
-          monsters: RecsType.StringArray,
+          monster: RecsType.String,
         },
         {
           metadata: {

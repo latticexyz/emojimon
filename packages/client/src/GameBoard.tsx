@@ -112,7 +112,7 @@ export const GameBoard = () => {
             gridRowEnd: height + 1,
           }}
         >
-          <EncounterScreen monsters={encounter.monsters as Entity[]} />
+          <EncounterScreen monster={encounter.monster as Entity} />
         </div>
       ) : null}
     </div>
