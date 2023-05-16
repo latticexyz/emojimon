@@ -3,10 +3,10 @@
   "private": true,
   "scripts": {
     "build": "pnpm recursive run build",
-    "dev": "run-pty % pnpm dev:node % pnpm dev:client % pnpm dev:contracts",
+    "dev": "pnpm run initialize && run-pty % pnpm run dev:node % pnpm run dev:client % pnpm run dev:contracts",
     "dev:client": "pnpm --filter 'client' run dev",
-    "dev:contracts": "pnpm --filter 'contracts' dev",
-    "dev:node": "pnpm --filter 'contracts' devnode",
+    "dev:contracts": "pnpm --filter 'contracts' run dev",
+    "dev:node": "pnpm --filter 'contracts' run devnode",
     "initialize": "pnpm recursive run initialize",
     "test": "pnpm recursive run test"
   },
