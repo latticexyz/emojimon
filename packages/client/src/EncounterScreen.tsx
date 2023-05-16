@@ -13,12 +13,14 @@ type Props = {
 
 export const EncounterScreen = ({ monster }: Props) => {
   const {
-    components: { Monster },
+    components,
     systemCalls: { throwBall, fleeEncounter },
   } = useMUD();
 
-  const monsterType = useComponentValue(Monster, monster)?.value as MonsterType;
-  const { name: monsterName, emoji: monsterEmoji } = monsterTypes[monsterType];
+  // const monsterType = useComponentValue(Monster, monster)?.value as MonsterType;
+  // const { name: monsterName, emoji: monsterEmoji } = monsterTypes[monsterType];
+  const monsterName = "TODO";
+  const monsterEmoji = "⚠️";
 
   const [appear, setAppear] = useState(false);
   useEffect(() => {

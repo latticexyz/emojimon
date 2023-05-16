@@ -3,36 +3,32 @@ import { Entity, Has, getComponentValueStrict } from "@latticexyz/recs";
 import { useComponentValue, useEntityQuery } from "@latticexyz/react";
 import { twMerge } from "tailwind-merge";
 import { useMUD } from "./MUDContext";
-import { useMapConfig } from "./useMapConfig";
+// import { useMapConfig } from "./useMapConfig";
 import { useKeyboardMovement } from "./useKeyboardMovement";
 import { EncounterScreen } from "./EncounterScreen";
 
 export const GameBoard = () => {
-  const { width, height, terrainValues } = useMapConfig();
+  const { width, height, terrainValues } =
+    // TODO: replace with MapConfig
+    {
+      width: 20,
+      height: 20,
+      terrainValues: [] as any[],
+    };
   const rows = new Array(width).fill(0).map((_, i) => i);
   const columns = new Array(height).fill(0).map((_, i) => i);
 
   const {
-    components: { Encounter, Position, Player },
+    components,
     network: { playerEntity },
     systemCalls: { spawn },
   } = useMUD();
 
   useKeyboardMovement();
 
-  const playerPosition = useComponentValue(Position, playerEntity);
-  const canSpawn = useComponentValue(Player, playerEntity)?.value !== true;
-  const encounter = useComponentValue(Encounter, playerEntity);
-
-  const otherPlayers = useEntityQuery([Has(Player), Has(Position)])
-    .filter((entity) => entity !== playerEntity)
-    .map((entity) => {
-      const position = getComponentValueStrict(Position, entity);
-      return {
-        entity,
-        position,
-      };
-    });
+  const playerPosition = null as any; // TODO
+  const canSpawn = false; // TODO
+  const encounter = null as any; // TODO
 
   const [showEncounter, setShowEncounter] = useState(false);
   // Reset show encounter when we leave encounter
@@ -51,9 +47,6 @@ export const GameBoard = () => {
           )?.type;
 
           const hasPlayer = playerPosition?.x === x && playerPosition?.y === y;
-          const otherPlayersHere = otherPlayers.filter(
-            (p) => p.position.x === x && p.position.y === y
-          );
 
           return (
             <div
@@ -90,12 +83,7 @@ export const GameBoard = () => {
                     {terrain.emoji}
                   </div>
                 ) : null}
-                <div className="relative">
-                  {hasPlayer ? <>🤠</> : null}
-                  {otherPlayersHere.map((p) => (
-                    <span key={p.entity}>🥸</span>
-                  ))}
-                </div>
+                <div className="relative">{hasPlayer ? <>🤠</> : null}</div>
               </div>
             </div>
           );
