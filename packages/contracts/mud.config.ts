@@ -5,6 +5,14 @@ export default mudConfig({
     // TODO
   },
   tables: {
-    // TODO
+    Movable: "bool",
+    Player: "bool",
+    Position: {
+      dataStruct: false,
+      schema: {
+        x: "uint32",
+        y: "uint32",
+      },
+    },
   },
 });
