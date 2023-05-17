@@ -8,3 +8,9 @@ enum Direction {
   South,
   West
 }
+
+enum TerrainType {
+  None,
+  TallGrass,
+  Boulder
+}
