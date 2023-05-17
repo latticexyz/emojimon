@@ -1,11 +1,11 @@
-import { useComponentValue } from "@latticexyz/react";
+import { useComponentValue, useEntityQuery } from "@latticexyz/react";
 import { GameMap } from "./GameMap";
 import { useMUD } from "./MUDContext";
 import { useKeyboardMovement } from "./useKeyboardMovement";
 import { hexToArray } from "@latticexyz/utils";
 import { TerrainType, terrainTypes } from "./terrainTypes";
 import { EncounterScreen } from "./EncounterScreen";
-import { Entity } from "@latticexyz/recs";
+import { Entity, Has, getComponentValueStrict } from "@latticexyz/recs";
 import { MonsterType, monsterTypes } from "./monsterTypes";
 
 export const GameBoard = () => {
@@ -19,16 +19,15 @@ export const GameBoard = () => {
 
   const canSpawn = useComponentValue(Player, playerEntity)?.value !== true;
 
-  const playerPosition = useComponentValue(Position, playerEntity);
-  const player =
-    playerEntity && playerPosition
-      ? {
-          x: playerPosition.x,
-          y: playerPosition.y,
-          emoji: "🤠",
-          entity: playerEntity,
-        }
-      : null;
+  const players = useEntityQuery([Has(Player), Has(Position)]).map((entity) => {
+    const position = getComponentValueStrict(Position, entity);
+    return {
+      entity,
+      x: position.x,
+      y: position.y,
+      emoji: entity === playerEntity ? "🤠" : "🥸",
+    };
+  });
 
   const mapConfig = useComponentValue(MapConfig, singletonEntity);
   if (mapConfig == null) {
@@ -64,7 +63,7 @@ export const GameBoard = () => {
       height={height}
       terrain={terrain}
       onTileClick={canSpawn ? spawn : undefined}
-      players={player ? [player] : []}
+      players={players}
       encounter={
         encounter ? (
           <EncounterScreen
