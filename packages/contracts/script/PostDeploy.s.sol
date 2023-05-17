@@ -6,7 +6,7 @@ import { console } from "forge-std/console.sol";
 import { StoreSwitch } from "@latticexyz/store/src/StoreSwitch.sol";
 
 import { IWorld } from "../src/codegen/world/IWorld.sol";
-import { MapConfig, Obstruction, Position } from "../src/codegen/index.sol";
+import { EncounterTrigger, MapConfig, Obstruction, Position } from "../src/codegen/index.sol";
 import { TerrainType } from "../src/codegen/common.sol";
 import { positionToEntityKey } from "../src/positionToEntityKey.sol";
 
@@ -62,6 +62,9 @@ contract PostDeploy is Script {
         if (terrainType == TerrainType.Boulder) {
           Position.set(entity, int32(x), int32(y));
           Obstruction.set(entity, true);
+        } else if (terrainType == TerrainType.TallGrass) {
+          Position.set(entity, int32(x), int32(y));
+          EncounterTrigger.set(entity, true);
         }
       }
     }
