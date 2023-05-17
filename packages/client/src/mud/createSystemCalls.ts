@@ -7,12 +7,33 @@ import { SetupNetworkResult } from "./setupNetwork";
 export type SystemCalls = ReturnType<typeof createSystemCalls>;
 
 export function createSystemCalls(
-  { playerEntity, worldSend, txReduced$ }: SetupNetworkResult,
-  { Player, Position }: ClientComponents
+  { playerEntity, singletonEntity, worldSend, txReduced$ }: SetupNetworkResult,
+  { MapConfig, Obstruction, Player, Position }: ClientComponents
 ) {
-  const moveTo = async (x: number, y: number) => {
+  const wrapPosition = (x: number, y: number) => {
+    const mapConfig = getComponentValue(MapConfig, singletonEntity);
+    if (!mapConfig) {
+      throw new Error("mapConfig no yet loaded or initialized");
+    }
+    return [
+      (x + mapConfig.width) % mapConfig.width,
+      (y + mapConfig.height) % mapConfig.height,
+    ];
+  };
+
+  const isObstructed = (x: number, y: number) => {
+    return runQuery([Has(Obstruction), HasValue(Position, { x, y })]).size > 0;
+  };
+
+  const moveTo = async (inputX: number, inputY: number) => {
     if (!playerEntity) {
       throw new Error("no player");
+    }
+
+    const [x, y] = wrapPosition(inputX, inputY);
+    if (isObstructed(x, y)) {
+      console.warn("cannot move to obstructed space");
+      return;
     }
 
     const positionId = uuid();
@@ -43,7 +64,7 @@ export function createSystemCalls(
     await moveTo(playerPosition.x + deltaX, playerPosition.y + deltaY);
   };
 
-  const spawn = async (x: number, y: number) => {
+  const spawn = async (inputX: number, inputY: number) => {
     if (!playerEntity) {
       throw new Error("no player");
     }
@@ -51,6 +72,12 @@ export function createSystemCalls(
     const canSpawn = getComponentValue(Player, playerEntity)?.value !== true;
     if (!canSpawn) {
       throw new Error("already spawned");
+    }
+
+    const [x, y] = wrapPosition(inputX, inputY);
+    if (isObstructed(x, y)) {
+      console.warn("cannot spawn on obstructed space");
+      return;
     }
 
     const positionId = uuid();
