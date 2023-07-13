@@ -4,7 +4,7 @@ pragma solidity >=0.8.0;
 import { Script } from "forge-std/Script.sol";
 import { console } from "forge-std/console.sol";
 import { IWorld } from "../src/codegen/world/IWorld.sol";
-import { MapConfig, Obstruction, Position } from "../src/codegen/Tables.sol";
+import { EncounterTrigger, MapConfig, Obstruction, Position } from "../src/codegen/Tables.sol";
 import { TerrainType } from "../src/codegen/Types.sol";
 import { positionToEntityKey } from "../src/positionToEntityKey.sol";
 
@@ -58,6 +58,9 @@ contract PostDeploy is Script {
         if (terrainType == TerrainType.Boulder) {
           Position.set(world, entity, x, y);
           Obstruction.set(world, entity, true);
+        } else if (terrainType == TerrainType.TallGrass) {
+          Position.set(world, entity, x, y);
+          EncounterTrigger.set(world, entity, true);
         }
       }
     }

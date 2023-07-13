@@ -2,9 +2,22 @@ import { mudConfig } from "@latticexyz/world/register";
  
 export default mudConfig({
   enums: {
+    MonsterType: ["None", "Eagle", "Rat", "Caterpillar"],
     TerrainType: ["None", "TallGrass", "Boulder"],
   },
   tables: {
+    Encounter: {
+      keySchema: {
+        player: "bytes32",
+      },
+      schema: {
+        exists: "bool",
+        monster: "bytes32",
+        catchAttempts: "uint256",
+      },
+    },
+    EncounterTrigger: "bool",
+    Encounterable: "bool",
     MapConfig: {
       keySchema: {},
       dataStruct: false,
@@ -14,6 +27,7 @@ export default mudConfig({
         terrain: "bytes",
       },
     },
+    Monster: "MonsterType",
     Movable: "bool",
     Obstruction: "bool",
     Player: "bool",
