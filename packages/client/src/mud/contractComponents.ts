@@ -69,6 +69,21 @@ export function defineContractComponents(world: World) {
         }
       );
     })(),
+    MonsterCatchAttempt: (() => {
+      const tableId = new TableId("", "MonsterCatchAtte");
+      return defineComponent(
+        world,
+        {
+          result: RecsType.Number,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
     Monster: (() => {
       const tableId = new TableId("", "Monster");
       return defineComponent(
@@ -105,6 +120,21 @@ export function defineContractComponents(world: World) {
         world,
         {
           value: RecsType.Boolean,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
+    OwnedBy: (() => {
+      const tableId = new TableId("", "OwnedBy");
+      return defineComponent(
+        world,
+        {
+          value: RecsType.String,
         },
         {
           metadata: {

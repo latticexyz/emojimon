@@ -8,7 +8,7 @@ export type SystemCalls = ReturnType<typeof createSystemCalls>;
  
 export function createSystemCalls(
   { playerEntity, singletonEntity, worldSend, txReduced$ }: SetupNetworkResult,
-  { Encounter, MapConfig, Obstruction, Player, Position }: ClientComponents
+  { Encounter, MapConfig, MonsterCatchAttempt, Obstruction, Player, Position }: ClientComponents
 ) {
   const wrapPosition = (x: number, y: number) => {
     const mapConfig = getComponentValue(MapConfig, singletonEntity);
@@ -104,13 +104,30 @@ export function createSystemCalls(
   };
  
   const throwBall = async () => {
-    // TODO
-    return null as any;
+    const player = playerEntity;
+    if (!player) {
+      throw new Error("no player");
+    }
+ 
+    const encounter = getComponentValue(Encounter, player);
+    if (!encounter) {
+      throw new Error("no encounter");
+    }
+ 
+    const tx = await worldSend("throwBall", []);
+    await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash);
+ 
+    const catchAttempt = getComponentValue(MonsterCatchAttempt, player);
+    if (!catchAttempt) {
+      throw new Error("no catch attempt found");
+    }
+ 
+    return catchAttempt.result as MonsterCatchResult;
   };
  
   const fleeEncounter = async () => {
-    // TODO
-    return null as any;
+    const tx = await worldSend("flee", []);
+    await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash);
   };
  
   return {
