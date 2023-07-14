@@ -8,7 +8,11 @@ import { EncounterScreen } from "./EncounterScreen";
 import { Entity, Has, getComponentValueStrict } from "@latticexyz/recs";
 import { MonsterType, monsterTypes } from "./monsterTypes";
  
-export const GameBoard = () => {
+type GameBoardProps = {
+  terrainStyle: TerrainStyle ;
+}
+
+export const GameBoard = (props: GameBoardProps) => {
   useKeyboardMovement();
  
   const {
@@ -17,7 +21,8 @@ export const GameBoard = () => {
     systemCalls: { spawn },
   } = useMUD();
 
-  const terrainStyle = TerrainStyle.FireAndWater;
+  const { terrainStyle } = props;
+
   const canSpawn = useComponentValue(Player, playerEntity)?.value !== true;
  
   const players = useEntityQuery([Has(Player), Has(Position)]).map((entity) => {
