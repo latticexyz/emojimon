@@ -2,6 +2,7 @@ import { ReactNode, useEffect, useState } from "react";
 import { Entity } from "@latticexyz/recs";
 import { twMerge } from "tailwind-merge";
 import { useMUD } from "./MUDContext";
+import { TerrainStyle } from "./terrainTypes";
 
 type Props = {
   width: number;
@@ -19,6 +20,7 @@ type Props = {
     entity: Entity;
   }[];
   encounter?: ReactNode;
+  terrainStyle?: TerrainStyle;
 };
 
 export const GameMap = ({
@@ -28,6 +30,7 @@ export const GameMap = ({
   terrain,
   players,
   encounter,
+  terrainStyle,
 }: Props) => {
   const {
     network: { playerEntity },
@@ -45,7 +48,7 @@ export const GameMap = ({
   }, [encounter]);
 
   return (
-    <div className="inline-grid p-2 bg-lime-500 relative overflow-hidden">
+    <div className={`inline-grid p-2 ${terrainStyle === TerrainStyle.FieldAndStone ? 'bg-lime-500' : 'bg-yellow-500'} relative overflow-hidden`}>
       {rows.map((y) =>
         columns.map((x) => {
           const terrainEmoji = terrain?.find(
