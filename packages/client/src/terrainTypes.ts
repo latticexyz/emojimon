@@ -1,8 +1,8 @@
 export enum TerrainType {
   TallGrass = 1,
-  Fire = 2,
-  Water = 3,
-  Boulder,
+  Boulder = 2,
+  Fire = 3,
+  Water = 4,
 }
 
 export enum TerrainStyle {

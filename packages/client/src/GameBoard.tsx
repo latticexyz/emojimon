@@ -3,7 +3,7 @@ import { GameMap } from "./GameMap";
 import { useMUD } from "./MUDContext";
 import { useKeyboardMovement } from "./useKeyboardMovement";
 import { hexToArray } from "@latticexyz/utils";
-import { TerrainType, terrainTypes } from "./terrainTypes";
+import { TerrainStyle, TerrainType, terrainTypes } from "./terrainTypes";
 import { EncounterScreen } from "./EncounterScreen";
 import { Entity, Has, getComponentValueStrict } from "@latticexyz/recs";
 import { MonsterType, monsterTypes } from "./monsterTypes";
@@ -16,7 +16,8 @@ export const GameBoard = () => {
     network: { playerEntity, singletonEntity },
     systemCalls: { spawn },
   } = useMUD();
- 
+
+  const terrainStyle = TerrainStyle.FireAndWater;
   const canSpawn = useComponentValue(Player, playerEntity)?.value !== true;
  
   const players = useEntityQuery([Has(Player), Has(Position)]).map((entity) => {
@@ -36,6 +37,15 @@ export const GameBoard = () => {
  
   const { width, height, terrain: terrainData } = mapConfig;
   const terrain = Array.from(hexToArray(terrainData)).map((value, index) => {
+    // Hacky toggle for 2 terrain types
+    if (value === 1 && terrainStyle === TerrainStyle.FireAndWater) {
+      value = 3
+    }
+
+    if (value === 2 && terrainStyle === TerrainStyle.FireAndWater) {
+      value = 4
+    }
+
     const { emoji } = value in TerrainType ? terrainTypes[value as TerrainType] : { emoji: "" };
     return {
       x: index % width,
@@ -53,6 +63,7 @@ export const GameBoard = () => {
       width={width}
       height={height}
       terrain={terrain}
+      terrainStyle={terrainStyle}
       onTileClick={canSpawn ? spawn : undefined}
       players={players}
       encounter={
