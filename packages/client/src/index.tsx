@@ -17,7 +17,7 @@ setup().then((result) => {
   root.render(
     <MUDProvider value={result}>
       <App />
-      <ToastContainer position="bottom-right" draggable={false} theme="dark" />
+      <ToastContainer position="top-left" draggable={false} theme="dark" />
     </MUDProvider>
   );
   mountDevTools();
