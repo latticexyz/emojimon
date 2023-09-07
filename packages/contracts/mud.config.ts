@@ -5,6 +5,18 @@ export default defineWorld({
     Direction: ["North", "East", "South", "West"],
   },
   tables: {
-    // TODO
+    Movable: "bool",
+    Player: "bool",
+    Position: {
+      schema: {
+        id: "bytes32",
+        x: "int32",
+        y: "int32",
+      },
+      key: ["id"],
+      codegen: {
+        dataStruct: false,
+      },
+    },
   },
 });
