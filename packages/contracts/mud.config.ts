@@ -5,6 +5,14 @@ export default mudConfig({
     Direction: ["North", "East", "South", "West"],
   },
   tables: {
-    // TODO
+    Movable: "bool",
+    Player: "bool",
+    Position: {
+      dataStruct: false,
+      valueSchema: {
+        x: "int32",
+        y: "int32",
+      },
+    },
   },
 });
