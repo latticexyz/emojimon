@@ -15,14 +15,9 @@ contract PostDeploy is Script {
     // Load the private key from the `PRIVATE_KEY` environment variable (in .env)
     uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
 
-    // Start broadcasting transactions from the deployer account
     vm.startBroadcast(deployerPrivateKey);
 
-    // ------------------ EXAMPLES ------------------
-
-    // Call increment on the world via the registered function selector
-    uint32 newValue = IWorld(worldAddress).increment();
-    console.log("Increment via IWorld:", newValue);
+    // TODO: Create a map
 
     vm.stopBroadcast();
   }

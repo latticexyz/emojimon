@@ -1,29 +1,31 @@
 import { useComponentValue } from "@latticexyz/react";
-import { useMUD } from "./MUDContext";
+import { SyncStep } from "@latticexyz/store-sync";
 import { singletonEntity } from "@latticexyz/store-sync/recs";
+import { useMUD } from "./MUDContext";
+import { GameBoard } from "./GameBoard";
 
 export const App = () => {
   const {
-    components: { Counter },
-    systemCalls: { increment },
+    components: { SyncProgress },
   } = useMUD();
 
-  const counter = useComponentValue(Counter, singletonEntity);
+  const loadingState = useComponentValue(SyncProgress, singletonEntity, {
+    step: SyncStep.INITIALIZE,
+    message: "Connecting",
+    percentage: 0,
+    latestBlockNumber: 0n,
+    lastBlockNumberProcessed: 0n,
+  });
 
   return (
-    <>
-      <div>
-        Counter: <span>{counter?.value ?? "??"}</span>
-      </div>
-      <button
-        type="button"
-        onClick={async (event) => {
-          event.preventDefault();
-          console.log("new counter value:", await increment());
-        }}
-      >
-        Increment
-      </button>
-    </>
+    <div className="w-screen h-screen flex items-center justify-center">
+      {loadingState.step !== SyncStep.LIVE ? (
+        <div>
+          {loadingState.message} ({loadingState.percentage.toFixed(2)}%)
+        </div>
+      ) : (
+        <GameBoard />
+      )}
+    </div>
   );
 };
