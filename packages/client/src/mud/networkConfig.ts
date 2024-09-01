@@ -36,7 +36,9 @@ import worlds from "contracts/worlds.json";
  */
 import { supportedChains } from "./supportedChains";
 
-export async function getNetworkConfig() {
+export const networkConfig = getNetworkConfig();
+
+function getNetworkConfig() {
   const params = new URLSearchParams(window.location.search);
 
   /*
@@ -81,7 +83,7 @@ export async function getNetworkConfig() {
     : world?.blockNumber ?? 0n;
 
   return {
-    privateKey: getBurnerPrivateKey(),
+    burnerPrivateKey: getBurnerPrivateKey(),
     chainId,
     chain,
     faucetServiceUrl: params.get("faucet") ?? chain.faucetUrl,

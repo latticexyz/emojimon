@@ -1,29 +1,18 @@
+import { publicClient, write$ } from "./account"
+import { networkConfig } from "./networkConfig"
+import { WalletClientWithAccount } from "./types"
+import { world } from "./world";
+import IWorldAbi from "contracts/out/IWorld.sol/IWorld.abi.json";
+import { Entity } from "@latticexyz/recs"
+import { encodeEntity, syncToRecs } from "@latticexyz/store-sync/recs";
+import { share } from "rxjs";
+
 /*
  * The MUD client code is built on top of viem
  * (https://viem.sh/docs/getting-started.html).
  * This line imports the functions we need from it.
  */
-import {
-  createPublicClient,
-  fallback,
-  webSocket,
-  http,
-  createWalletClient,
-  Hex,
-  parseEther,
-  ClientConfig,
-  getContract,
-} from "viem";
-import { createFaucetService } from "@latticexyz/services/faucet";
-import { encodeEntity, syncToRecs } from "@latticexyz/store-sync/recs";
-
-import { getNetworkConfig } from "./getNetworkConfig";
-import { world } from "./world";
-import IWorldAbi from "contracts/out/IWorld.sol/IWorld.abi.json";
-import { createBurnerAccount, transportObserver, ContractWrite } from "@latticexyz/common";
-import { transactionQueue, writeObserver } from "@latticexyz/common/actions";
-
-import { Subject, share } from "rxjs";
+import { Hex, getContract } from "viem"
 
 /*
  * Import our MUD config, which includes strong types for
@@ -35,49 +24,45 @@ import { Subject, share } from "rxjs";
  */
 import mudConfig from "contracts/mud.config";
 
-export type SetupNetworkResult = Awaited<ReturnType<typeof setupNetwork>>;
+/**
+ * Network configured without a wallet.
+ */
+export type NetworkWithoutAccount = Awaited<ReturnType<typeof setupNetwork>>;
 
-export async function setupNetwork() {
-  const networkConfig = await getNetworkConfig();
+/**
+ * Network configured with a wallet.
+ */
+export type Network = NetworkWithoutAccount & {
+  walletClient?: WalletClientWithAccount
+  playerEntity?: Entity
+};
 
-  /*
-   * Create a viem public (read only) client
-   * (https://viem.sh/docs/clients/public.html)
-   */
-  const clientOptions = {
-    chain: networkConfig.chain,
-    transport: transportObserver(fallback([webSocket(), http()])),
-    pollingInterval: 1000,
-  } as const satisfies ClientConfig;
+/**
+ * Type of the world contract bojec tin read-write mode.
+ */
+export type WorldContractWrite = ReturnType<typeof getWorldContract<WalletClientWithAccount>>;
 
-  const publicClient = createPublicClient(clientOptions);
-
-  /*
-   * Create an observable for contract writes that we can
-   * pass into MUD dev tools for transaction observability.
-   */
-  const write$ = new Subject<ContractWrite>();
-
-  /*
-   * Create a temporary wallet and a viem client for it
-   * (see https://viem.sh/docs/clients/wallet.html).
-   */
-  const burnerAccount = createBurnerAccount(networkConfig.privateKey as Hex);
-  const burnerWalletClient = createWalletClient({
-    ...clientOptions,
-    account: burnerAccount,
-  })
-    .extend(transactionQueue())
-    .extend(writeObserver({ onWrite: (write) => write$.next(write) }));
-
-  /*
-   * Create an object for communicating with the deployed World.
-   */
-  const worldContract = getContract({
+/**
+ * Creates the world contract object to communicate with the deployed World, in read or read-write
+ * mode if a wallet is passed.
+ *
+ * Isolate this in its own function to get access to its complex return
+ * type.
+ */
+function getWorldContract<T extends WalletClientWithAccount | undefined>(walletClient: T) {
+  return getContract({
     address: networkConfig.worldAddress as Hex,
     abi: IWorldAbi,
-    client: { public: publicClient, wallet: burnerWalletClient },
+    client: { public: publicClient, wallet: walletClient },
   });
+}
+
+/**
+ * Sets up the network for the MUD client, potentially before a user/wallet is available.
+ */
+export async function setupNetwork(walletClient?: WalletClientWithAccount) {
+
+  const worldContract = getWorldContract(walletClient);
 
   /*
    * Sync on-chain state into RECS and keeps our client in sync.
@@ -93,44 +78,32 @@ export async function setupNetwork() {
     startBlock: BigInt(networkConfig.initialBlockNumber),
   });
 
-  /*
-   * If there is a faucet, request (test) ETH if you have
-   * less than 1 ETH. Repeat every 20 seconds to ensure you don't
-   * run out.
-   */
-  if (networkConfig.faucetServiceUrl) {
-    const address = burnerAccount.address;
-    console.info("[Dev Faucet]: Player address -> ", address);
-
-    const faucet = createFaucetService(networkConfig.faucetServiceUrl);
-
-    const requestDrip = async () => {
-      const balance = await publicClient.getBalance({ address });
-      console.info(`[Dev Faucet]: Player balance -> ${balance}`);
-      const lowBalance = balance < parseEther("1");
-      if (lowBalance) {
-        console.info("[Dev Faucet]: Balance is low, dripping funds to player");
-        // Double drip
-        await faucet.dripDev({ address });
-        await faucet.dripDev({ address });
-      }
-    };
-
-    requestDrip();
-    // Request a drip every 20 seconds
-    setInterval(requestDrip, 20000);
-  }
-
   return {
     world,
     components,
-    playerEntity: encodeEntity({ address: "address" }, { address: burnerWalletClient.account.address }),
     publicClient,
-    walletClient: burnerWalletClient,
     latestBlock$,
     storedBlockLogs$,
     waitForTransaction,
     worldContract,
     write$: write$.asObservable().pipe(share()),
   };
+}
+
+/**
+ * Configures the network with the wallet client, if available.
+ * Does not modify the original network object.
+ */
+export function configureNetworkWithWallet(
+  network: NetworkWithoutAccount,
+  walletClient?: WalletClientWithAccount
+): Network {
+
+  const playerEntity = walletClient
+    ? encodeEntity({ address: "address" }, { address: walletClient.account.address })
+    : undefined;
+
+  const worldContract = getWorldContract(walletClient);
+
+  return { ...network, walletClient, playerEntity, worldContract };
 }

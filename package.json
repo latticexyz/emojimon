@@ -22,7 +22,6 @@
     "typescript": "5.4.2"
   },
   "engines": {
-    "node": "18.x",
-    "pnpm": "8.x"
+    "node": "18.x"
   }
 }

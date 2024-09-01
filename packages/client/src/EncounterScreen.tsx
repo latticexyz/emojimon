@@ -9,9 +9,15 @@ type Props = {
   monsterEmoji: string;
 };
 
+// Throw errors if we are somehow disconnected on the encounter screen.
+const noopActions = {
+  throwBall: async () => { throw Error("no user"); },
+  fleeEncounter: async () => { throw Error("no user"); },
+};
+
 export const EncounterScreen = ({ monsterName, monsterEmoji }: Props) => {
   const {
-    systemCalls: { throwBall, fleeEncounter },
+    systemCalls: { throwBall, fleeEncounter } = noopActions,
   } = useMUD();
 
   const [appear, setAppear] = useState(false);

@@ -1,9 +1,9 @@
 import { overridableComponent } from "@latticexyz/recs";
-import { SetupNetworkResult } from "./setupNetwork";
+import { NetworkWithoutAccount } from "./setupNetwork"
 
 export type ClientComponents = ReturnType<typeof createClientComponents>;
 
-export function createClientComponents({ components }: SetupNetworkResult) {
+export function createClientComponents({ components }: NetworkWithoutAccount) {
   return {
     ...components,
     Player: overridableComponent(components.Player),

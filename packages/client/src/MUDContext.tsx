@@ -1,11 +1,11 @@
 import { createContext, ReactNode, useContext } from "react";
-import { SetupResult } from "./mud/setup";
+import { MUDInterface } from "./mud/types"
 
-const MUDContext = createContext<SetupResult | null>(null);
+const MUDContext = createContext<MUDInterface | null>(null);
 
 type Props = {
   children: ReactNode;
-  value: SetupResult;
+  value: MUDInterface;
 };
 
 export const MUDProvider = ({ children, value }: Props) => {

@@ -2,14 +2,14 @@ import { Has, HasValue, getComponentValue, runQuery } from "@latticexyz/recs";
 import { singletonEntity } from "@latticexyz/store-sync/recs";
 import { uuid } from "@latticexyz/utils";
 import { ClientComponents } from "./createClientComponents";
-import { SetupNetworkResult } from "./setupNetwork";
+import { type Network, WorldContractWrite } from "./setupNetwork"
 import { Direction } from "../direction";
 import { MonsterCatchResult } from "../monsterCatchResult";
 
 export type SystemCalls = ReturnType<typeof createSystemCalls>;
 
 export function createSystemCalls(
-  { playerEntity, worldContract, waitForTransaction }: SetupNetworkResult,
+  { playerEntity, worldContract: _worldContract, waitForTransaction }: Network,
   {
     Encounter,
     MapConfig,
@@ -19,6 +19,8 @@ export function createSystemCalls(
     Position,
   }: ClientComponents
 ) {
+  const worldContract = _worldContract as WorldContractWrite;
+
   const wrapPosition = (x: number, y: number) => {
     const mapConfig = getComponentValue(MapConfig, singletonEntity);
     if (!mapConfig) {
@@ -141,6 +143,10 @@ export function createSystemCalls(
   };
 
   const fleeEncounter = async () => {
+    if (!playerEntity) {
+      throw new Error("no player");
+    }
+
     const tx = await worldContract.write.flee();
     await waitForTransaction(tx);
   };

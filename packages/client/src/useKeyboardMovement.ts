@@ -3,11 +3,11 @@ import { useMUD } from "./MUDContext";
 import { Direction } from "./direction";
 
 export const useKeyboardMovement = () => {
-  const {
-    systemCalls: { move },
-  } = useMUD();
+  const { systemCalls: { move } = {} } = useMUD();
 
   useEffect(() => {
+    if (!move) return
+
     const listener = (e: KeyboardEvent) => {
       if (e.key === "ArrowUp") {
         move(Direction.North);

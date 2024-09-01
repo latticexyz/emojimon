@@ -1,31 +1,35 @@
-import { useComponentValue } from "@latticexyz/react";
-import { SyncStep } from "@latticexyz/store-sync";
-import { singletonEntity } from "@latticexyz/store-sync/recs";
-import { useMUD } from "./MUDContext";
-import { GameBoard } from "./GameBoard";
+import { useState } from "react";
+import { ToastContainer } from "react-toastify";
+import { LoadingWrapper } from "./LoadingWrapper";
+import { createBurnerWalletClient } from "./mud/account";
+import { useDevTools } from "./mud/devTools";
+import { useFaucet } from "./mud/faucet";
+import { useSetup } from "./mud/setup";
+import { WalletClientWithAccount } from "./mud/types";
+import { MUDProvider } from "./MUDContext";
+
+const walletClient = createBurnerWalletClient()
 
 export const App = () => {
-  const {
-    components: { SyncProgress },
-  } = useMUD();
+  const [wallet, setWallet] = useState<WalletClientWithAccount | undefined>();
+  const mud = useSetup(wallet);
+  useFaucet(wallet?.account.address);
+  useDevTools(mud);
 
-  const loadingState = useComponentValue(SyncProgress, singletonEntity, {
-    step: SyncStep.INITIALIZE,
-    message: "Connecting",
-    percentage: 0,
-    latestBlockNumber: 0n,
-    lastBlockNumberProcessed: 0n,
-  });
+  const connect = () => setWallet(walletClient);
+  const disconnect = () => setWallet(undefined);
 
-  return (
-    <div className="w-screen h-screen flex items-center justify-center">
-      {loadingState.step !== SyncStep.LIVE ? (
-        <div>
-          {loadingState.message} ({loadingState.percentage.toFixed(2)}%)
+  return mud
+    ? <MUDProvider value={mud}>
+        <div style={{ position: "absolute", top: "0", right: "0", padding: "20px" }}>
+          {!wallet
+            ? <button onClick={connect} style={{ cursor: "pointer" }}>Connect</button>
+            : <button onClick={disconnect} style={{ cursor: "pointer" }}>Disconnect</button>}
         </div>
-      ) : (
-        <GameBoard />
-      )}
-    </div>
-  );
+        <LoadingWrapper/>;
+        <ToastContainer position="bottom-right" draggable={false} theme="dark"/>
+      </MUDProvider>
+    : <div className="w-screen h-screen flex items-center justify-center">
+        <div>Setting up ...</div>
+      </div>
 };

@@ -15,10 +15,11 @@ export const GameBoard = () => {
   const {
     components: { Encounter, MapConfig, Monster, Player, Position },
     network: { playerEntity },
-    systemCalls: { spawn },
+    systemCalls: { spawn } = {},
   } = useMUD();
 
-  const canSpawn = useComponentValue(Player, playerEntity)?.value !== true;
+  const noPosition = useComponentValue(Player, playerEntity)?.value !== true;
+  const canSpawn = spawn && noPosition;
 
   const players = useEntityQuery([Has(Player), Has(Position)]).map((entity) => {
     const position = getComponentValueStrict(Position, entity);
